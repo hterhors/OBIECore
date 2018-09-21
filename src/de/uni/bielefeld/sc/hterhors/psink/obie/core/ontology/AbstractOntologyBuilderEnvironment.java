@@ -2,7 +2,6 @@ package de.uni.bielefeld.sc.hterhors.psink.obie.core.ontology;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 

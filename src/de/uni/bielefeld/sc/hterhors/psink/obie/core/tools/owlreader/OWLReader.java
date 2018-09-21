@@ -62,8 +62,9 @@ public class OWLReader implements Serializable {
 	private static final String VARIABLE_NAME_ADDITIONAL_INFO = "additionalInfo";
 	private final static String VARIABLE_NAME_RELATION_TYPE = "relationType";
 
-	final private static String stdPrefixes = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
-			+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>" + "PREFIX owl: <http://www.w3.org/2002/07/owl#>";
+	final private static String stdPrefixes = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
+			+ "PREFIX scio: <http://psink/scio>" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>"
+			+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>";
 
 	final private String allPrefixes;
 
