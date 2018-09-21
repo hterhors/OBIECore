@@ -5,12 +5,12 @@ import de.uni.bielefeld.sc.hterhors.psink.obie.core.ontology.interfaces.IOBIEThi
 public class OBIEUtils {
 
 	/**
-	 * Performs a deep clone on the given object using the constructor. This clones
-	 * only the ontology model fields.
+	 * Performs a deep clone on the given object using the constructor.
 	 */
 	public static IOBIEThing deepConstructorClone(IOBIEThing scioClass) {
 		if (scioClass == null)
 			return null;
+
 		try {
 			return scioClass.getClass().getDeclaredConstructor(scioClass.getClass()).newInstance(scioClass);
 		} catch (Exception e) {
