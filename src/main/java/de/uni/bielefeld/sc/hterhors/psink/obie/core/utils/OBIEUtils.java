@@ -5,6 +5,7 @@ import de.uni.bielefeld.sc.hterhors.psink.obie.core.ontology.interfaces.IOBIEThi
 public class OBIEUtils {
 
 	/**
+	 * TODO: put in each OBIE class. Override clone() function. 
 	 * Performs a deep clone on the given object using the constructor.
 	 */
 	public static IOBIEThing deepConstructorClone(IOBIEThing scioClass) {
