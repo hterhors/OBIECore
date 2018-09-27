@@ -10,7 +10,7 @@ import java.util.List;
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.ontology.annotations.OntologyModelContent;
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.ontology.annotations.RelationTypeCollection;
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.ontology.interfaces.IOBIEThing;
-import de.uni.bielefeld.sc.hterhors.psink.obie.core.projects.AbstractOBIEProjectEnvironment;
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.projects.AbstractProjectEnvironment;
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.tokenizer.RegExTokenizer;
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.tokenizer.SentenceSplitter;
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.tokenizer.Token;
@@ -26,7 +26,7 @@ import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.corpus.OBIECorpus.Inst
  */
 public class ConvertRawCorpusToSANTOFormat {
 
-	public ConvertRawCorpusToSANTOFormat(final File parentCorpusDirectory, AbstractOBIEProjectEnvironment environment) {
+	public ConvertRawCorpusToSANTOFormat(final File parentCorpusDirectory, AbstractProjectEnvironment environment) {
 
 		OBIECorpus corpus = OBIECorpus.readRawCorpusData(environment.getRawCorpusFile());
 

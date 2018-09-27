@@ -13,6 +13,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.JavaClassNamingTools;
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader.container.OntologyClass;
@@ -31,6 +33,8 @@ public class OWLReader implements Serializable {
 	 * 
 	 */
 	final private static long serialVersionUID = 1L;
+
+	public static Logger log = LogManager.getFormatterLogger(OWLReader.class.getSimpleName());
 
 	final private static Map<String, OntologyClass> classFactory = new HashMap<>();
 	final private static Map<String, OntologySlotData> slotFactory = new HashMap<>();
@@ -62,9 +66,11 @@ public class OWLReader implements Serializable {
 	private static final String VARIABLE_NAME_ADDITIONAL_INFO = "additionalInfo";
 	private final static String VARIABLE_NAME_RELATION_TYPE = "relationType";
 
+	private static final String VARIABLE_NAME_DT_RESTRICTION = "restriction";
+
 	final private static String stdPrefixes = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
-			+ "PREFIX scio: <http://psink/scio>" + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>"
-			+ "PREFIX owl: <http://www.w3.org/2002/07/owl#>";
+			+ "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> " + "PREFIX scio: <http://psink/scio>"
+			+ "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>" + "PREFIX owl: <http://www.w3.org/2002/07/owl#>";
 
 	final private String allPrefixes;
 
@@ -123,25 +129,6 @@ public class OWLReader implements Serializable {
 
 		applyFilter();
 
-		applyConsistencyCheck();
-
-	}
-
-	private void applyConsistencyCheck() {
-		for (OntologyClass scioClass : classes) {
-
-			if (scioClass.subclasses.isEmpty() && !scioClass.isDataType && !scioClass.isNamedIndividual
-					&& !hasProperties(scioClass)) {
-				System.err.println("Class is not marked as NamedIndividual but has no properties: " + scioClass);
-			}
-		}
-
-		for (OntologyClass scioClass : classes) {
-
-			if (scioClass.isDataType && hasProperties(scioClass)) {
-				System.err.println("Class is marked as DataType Proeprty but has properties: " + scioClass);
-			}
-		}
 	}
 
 	private void applyFilter() {
@@ -362,6 +349,8 @@ public class OWLReader implements Serializable {
 	private void collectDataTypeProperties(ApacheJenaDatabase db) {
 		for (Map<String, RDFObject> data : extractDatatypeProperties(db).queryData) {
 
+			final EDatatypeRestriction restriction = mapRestriction(data.get(VARIABLE_NAME_DT_RESTRICTION));
+
 			final OntologyClass domainClass = dataClassFactory(data.get(VARIABLE_NAME_DOMAIN).value);
 
 			final ECardinalityType cardinality = getCardinalityFromRelationType(data);
@@ -372,6 +361,8 @@ public class OWLReader implements Serializable {
 			 * Create artificial class for datatype properties.
 			 */
 			final OntologyClass datatypeRangeClass = classFactory(data.get(VARIABLE_NAME_PROPERTY).value, true);
+
+			datatypeRangeClass.restriction = restriction;
 
 			this.classes.add(domainClass);
 			this.classes.add(datatypeRangeClass);
@@ -466,6 +457,27 @@ public class OWLReader implements Serializable {
 			classFactory.put(ontologyClassName, dc);
 			return dc;
 		}
+	}
+
+	private static EDatatypeRestriction mapRestriction(final RDFObject rdfObject) {
+
+		if (rdfObject == null) {
+			return EDatatypeRestriction.STRING;
+		}
+
+		switch (rdfObject.value.toLowerCase()) {
+		case "xsd:string":
+			return EDatatypeRestriction.STRING;
+		case "xsd:integer":
+			return EDatatypeRestriction.INTEGER;
+		case "xsd:float":
+			return EDatatypeRestriction.FLOAT;
+		default:
+			log.warn("Can not interprete datatype restriction for value: " + rdfObject
+					+ " return string as defautl value.");
+			return EDatatypeRestriction.STRING;
+		}
+
 	}
 
 	private QueryResult extractAllClasses(ApacheJenaDatabase db) {
@@ -660,7 +672,8 @@ public class OWLReader implements Serializable {
 		System.out.println("_________Extract DatatypeProperties__________");
 		return db.select(allPrefixes
 				//
-				+ "select ?" + VARIABLE_NAME_DOMAIN + " ?" + VARIABLE_NAME_PROPERTY + " ?" + VARIABLE_NAME_RANGE
+				+ "select  ?a ?b ?base ?" + VARIABLE_NAME_DT_RESTRICTION + " ?" + VARIABLE_NAME_DOMAIN + " ?"
+				+ VARIABLE_NAME_PROPERTY + " ?" + VARIABLE_NAME_RANGE
 				//
 				+ "(STR(?relTyp) AS ?" + VARIABLE_NAME_RELATION_TYPE + ") "
 				//
@@ -670,6 +683,9 @@ public class OWLReader implements Serializable {
 				//
 				+ "?" + VARIABLE_NAME_PROPERTY + " a owl:DatatypeProperty. "
 				//
+				+ "OPTIONAL {?" + VARIABLE_NAME_PROPERTY + " owl:onDatatype  ?" + VARIABLE_NAME_DT_RESTRICTION + ". "
+				+ "} ."
+//
 				+ "OPTIONAL {?" + VARIABLE_NAME_PROPERTY + " scio:relationType ?relTyp} ."
 				//
 				+ "OPTIONAL{?" + VARIABLE_NAME_PROPERTY + " rdfs:range ?" + VARIABLE_NAME_RANGE + "}. "

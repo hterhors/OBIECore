@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.JavaClassNamingTools;
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader.EDatatypeRestriction;
 
 public class OntologyClass implements Serializable {
 
@@ -53,9 +54,17 @@ public class OntologyClass implements Serializable {
 
 	/**
 	 * Whether this class is the range of a datatype property. Usually these classes
-	 * are artifical classes as datatype properties tend to have no range class.
+	 * are artificial classes as datatype properties tend to have no range class.
 	 */
 	public boolean isDataType = false;
+
+	/**
+	 * If this class is a datatype property-class, this variable corresponds to the
+	 * restriction specified in owl. The value of this datatype class will be
+	 * restricted to the provided restriction e.g. string, int or float.
+	 *
+	 **/
+	public EDatatypeRestriction restriction = EDatatypeRestriction.STRING;
 
 	/**
 	 * Whether this class is a named individual in the ontolgy.

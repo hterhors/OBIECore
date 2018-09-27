@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import de.uni.bielefeld.sc.hterhors.psink.obie.core.ontology.AbstractOntologyBuilderEnvironment;
-import de.uni.bielefeld.sc.hterhors.psink.obie.core.projects.AbstractOBIEProjectEnvironment;
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.ontology.AbstractOntologyEnvironment;
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.projects.AbstractProjectEnvironment;
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.JavaClassNamingTools;
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader.ECardinalityType;
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader.OWLReader;
@@ -27,9 +27,9 @@ public class OWLToAnnoDBConfigurationConverter {
 
 	private final File parent;
 
-	private final AbstractOntologyBuilderEnvironment environment;
+	private final AbstractOntologyEnvironment environment;
 
-	public OWLToAnnoDBConfigurationConverter(File parentDirectory, AbstractOntologyBuilderEnvironment environment) {
+	public OWLToAnnoDBConfigurationConverter(File parentDirectory, AbstractOntologyEnvironment environment) {
 
 		this.environment = environment;
 		this.parent = new File(parentDirectory, "version" + environment.getOntologyVersion() + "/");

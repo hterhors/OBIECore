@@ -4,6 +4,9 @@ import java.io.Serializable;
 
 import org.apache.jena.rdf.model.Model;
 
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.ontology.AbstractOBIEIndividual;
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.ontology.IndividualFactory;
+
 public interface IOBIEThing extends Serializable {
 
 	public static class Score {
@@ -33,6 +36,14 @@ public interface IOBIEThing extends Serializable {
 
 	}
 
+	default public IndividualFactory<? extends AbstractOBIEIndividual> getIndividualFactory() {
+		return null;
+	}
+
+	default public AbstractOBIEIndividual getIndividual() {
+		return null;
+	}
+
 	/***/
 	public String getAnnotationID();
 
@@ -56,9 +67,6 @@ public interface IOBIEThing extends Serializable {
 
 	/***/
 	public boolean isEmpty();
-
-	/***/
-	public void setCharacterOffset(Integer offset);
 
 	/***/
 	public void setCharacterOnset(Integer onset);

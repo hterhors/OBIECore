@@ -5,26 +5,19 @@ import java.io.Serializable;
 
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.ontology.interfaces.IOBIEThing;
 
-public abstract class AbstractOBIEProjectEnvironment implements Serializable {
+public abstract class AbstractProjectEnvironment implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	protected AbstractOBIEProjectEnvironment() {
+	protected AbstractProjectEnvironment() {
 	}
 
 	public final String PACKAGE_PREFIX = "package ";
 
 	public final String OBIE_ANNOTATIONS_PACKAGE_NAME = "de.uni.bielefeld.sc.hterhors.psink.obie.annotations.*";
-
-	public final String OBIE_CLASSES_PACKAGE_NAME = getOntologyBasePackage() + "classes.";
-	public final String OBIE_INTERFACES_PACKAGE_NAME = getOntologyBasePackage() + "interfaces.";
-
-	public abstract int getOntologyVersion();
-
-	public abstract String getOntologyBasePackage();
 
 	public abstract Class<? extends IOBIEThing> getOntologyThingInterface();
 

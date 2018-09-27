@@ -7,7 +7,7 @@ import java.util.Set;
 
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader.IClassFilter;
 
-public abstract class AbstractOntologyBuilderEnvironment implements Serializable {
+public abstract class AbstractOntologyEnvironment implements Serializable {
 
 	/**
 	 * 

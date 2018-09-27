@@ -16,10 +16,10 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.NotImplementedException;
 
-import de.uni.bielefeld.sc.hterhors.psink.obie.core.ontology.AbstractOntologyBuilderEnvironment;
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.ontology.AbstractOntologyEnvironment;
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.ontology.annotations.SuperRootClasses;
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.ontology.interfaces.IOBIEThing;
-import de.uni.bielefeld.sc.hterhors.psink.obie.core.projects.AbstractOBIEProjectEnvironment;
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.projects.AbstractProjectEnvironment;
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.JavaClassNamingTools;
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader.OWLReader;
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader.container.OntologyClass;
@@ -58,13 +58,13 @@ public class OWL2GraphmlConverter {
 
 	}
 
-	protected AbstractOntologyBuilderEnvironment env;
+	protected AbstractOntologyEnvironment env;
 	private int version = env.getOntologyVersion();
 
 	protected OWLReader dataProvider = new OWLReader(env.getOwlClassFilter(), env.getAdditionalPropertyNames(),env.getAdditionalPrefixes(),
 			env.getOntologyFile());
 
-	public OWL2GraphmlConverter(AbstractOntologyBuilderEnvironment env) throws IOException, Exception {
+	public OWL2GraphmlConverter(AbstractOntologyEnvironment env) throws IOException, Exception {
 
 		this.env = env;
 

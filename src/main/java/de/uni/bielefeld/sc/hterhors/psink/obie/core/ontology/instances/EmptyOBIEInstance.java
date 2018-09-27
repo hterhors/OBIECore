@@ -1,7 +1,9 @@
-package de.uni.bielefeld.sc.hterhors.psink.obie.core.instances;
+package de.uni.bielefeld.sc.hterhors.psink.obie.core.ontology.instances;
 
 import org.apache.jena.rdf.model.Model;
 
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.ontology.AbstractOBIEIndividual;
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.ontology.IndividualFactory;
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.ontology.interfaces.IOBIEThing;
 
 public class EmptyOBIEInstance implements IOBIEThing {
@@ -59,10 +61,6 @@ public class EmptyOBIEInstance implements IOBIEThing {
 	}
 
 	@Override
-	public void setCharacterOffset(Integer offset) {
-	}
-
-	@Override
 	public void setCharacterOnset(Integer onset) {
 	}
 
@@ -74,6 +72,16 @@ public class EmptyOBIEInstance implements IOBIEThing {
 	@Override
 	public String toString() {
 		return "EmptyOBIEInstance []";
+	}
+
+	@Override
+	public IndividualFactory<? extends AbstractOBIEIndividual> getIndividualFactory() {
+		return null;
+	}
+
+	@Override
+	public AbstractOBIEIndividual getIndividual() {
+		return null;
 	}
 
 }
