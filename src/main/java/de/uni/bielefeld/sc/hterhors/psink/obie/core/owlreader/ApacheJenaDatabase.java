@@ -1,4 +1,4 @@
-package de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader;
+package de.uni.bielefeld.sc.hterhors.psink.obie.core.owlreader;
 
 import java.io.File;
 import java.io.InputStream;
@@ -19,9 +19,13 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.shared.JenaException;
 import org.apache.jena.util.FileManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ApacheJenaDatabase {
 	private final Model model;
+
+	public static Logger log = LogManager.getFormatterLogger(OWLReader.class.getSimpleName());
 
 	public static Model getOntologyModel(File ontologyFile) {
 		Model ontologyModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM, null).getBaseModel();
@@ -49,14 +53,14 @@ public class ApacheJenaDatabase {
 		try {
 			return select(model, queryString);
 		} catch (Exception e) {
-			System.out.println(queryString);
+			log.warn(queryString);
 			throw e;
 		}
 	}
 
 	private static QueryResult select(Model model, String queryString) {
 		Query query = QueryFactory.create(queryString);
-		System.out.println("Query: " + query);
+		log.debug("Query: " + query);
 
 		List<Map<String, RDFObject>> data = new LinkedList<>();
 

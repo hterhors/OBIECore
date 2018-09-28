@@ -4,8 +4,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.ontology.interfaces.IOBIEThing;
-import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader.OWLReader;
-import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader.container.OntologyClass;
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.owlreader.OWLReader;
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.owlreader.container.OntologyClass;
 
 public class OntologyInitializer {
 	private static final String INDIVIDUAL_FACTORY_INIT_METHOD_NAME = "sys_init";
@@ -14,13 +14,13 @@ public class OntologyInitializer {
 
 	public static final String INDIVIDUAL_CLASS_TYPE = "individualClassType";
 
+	public static final String INDIVIDUAL_FIELD_NAME = "individual";
+
 	public static void initializeOntology(AbstractOntologyEnvironment ontologyEnvironment) {
 
 		try {
 
-			final OWLReader owlReader = new OWLReader(ontologyEnvironment.getOwlClassFilter(),
-					ontologyEnvironment.getAdditionalPropertyNames(), ontologyEnvironment.getAdditionalPrefixes(),
-					ontologyEnvironment.getOntologyFile());
+			final OWLReader owlReader = new OWLReader(ontologyEnvironment);
 
 			Method systemInitMethod = IndividualFactory.class.getDeclaredMethod(INDIVIDUAL_FACTORY_INIT_METHOD_NAME,
 					Class.class, OntologyClass.class, OWLReader.class);

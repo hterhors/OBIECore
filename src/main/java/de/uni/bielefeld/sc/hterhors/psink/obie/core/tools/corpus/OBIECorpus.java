@@ -38,14 +38,13 @@ public class OBIECorpus implements Serializable {
 		 */
 		private static final long serialVersionUID = 1;
 
-		public final String documentName;
-		public final String documentContent;
+		public final String name;
+		public final String content;
 		public final Map<Class<? extends IOBIEThing>, List<IOBIEThing>> annotations;
 
-		public Instance(String documentName, String documentContent,
-				Map<Class<? extends IOBIEThing>, List<IOBIEThing>> annotations) {
-			this.documentName = documentName;
-			this.documentContent = documentContent;
+		public Instance(String name, String content, Map<Class<? extends IOBIEThing>, List<IOBIEThing>> annotations) {
+			this.name = name;
+			this.content = content;
 			this.annotations = Collections.unmodifiableMap(annotations);
 		}
 
@@ -182,7 +181,7 @@ public class OBIECorpus implements Serializable {
 		return rootClassTypes;
 	}
 
-	public List<String> getAllDocumentNames() {
+	public List<String> getAllInstanceNames() {
 		return allDocumentNames;
 	}
 

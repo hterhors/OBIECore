@@ -1,15 +1,16 @@
 package de.uni.bielefeld.sc.hterhors.psink.obie.core.ontology;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader.OWLReader;
-import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader.container.OntologyClass;
+import org.apache.jena.sparql.pfunction.library.concat;
+
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.owlreader.OWLReader;
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.owlreader.container.OntologyClass;
 
 public class IndividualFactory<I extends AbstractOBIEIndividual> {
 
@@ -18,12 +19,15 @@ public class IndividualFactory<I extends AbstractOBIEIndividual> {
 	final private Map<String, I> possibleInstances = new HashMap<>();
 
 	public Collection<AbstractOBIEIndividual> getIndividuals() {
+		/**
+		 * TODO: Use Set?
+		 */
 		return Collections.unmodifiableCollection(possibleInstances.values());
 	}
 
 	public I getIndividualByURI(String URI) {
 		if (!possibleInstances.containsKey(URI)) {
-			throw new IllegalStateException("Illegal individual type for class.");
+			throw new IllegalStateException("Illegal individual:" + URI);
 		}
 		return possibleInstances.get(URI);
 	}
@@ -34,17 +38,11 @@ public class IndividualFactory<I extends AbstractOBIEIndividual> {
 
 	/**
 	 * This method is only accessible via Java-Reflections! Initializes the
-	 * individual-factory for a class.
+	 * individual-factory for an ontological class.
 	 * 
 	 * @param individualClassType
 	 * @param ontologicalClass
 	 * @param owlReader
-	 * @throws InstantiationException
-	 * @throws IllegalAccessException
-	 * @throws IllegalArgumentException
-	 * @throws InvocationTargetException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
 	 */
 	@SuppressWarnings("unused")
 	private void sys_init(Class<I> individualClassType, OntologyClass ontologicalClass, OWLReader owlReader) {
@@ -60,8 +58,7 @@ public class IndividualFactory<I extends AbstractOBIEIndividual> {
 
 						possibleInstances.put(individual.fullyQualifiedOntolgyName,
 								c.newInstance(individual.namespace, individual.ontologyClassName));
-					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-							| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+					} catch (Exception e) {
 						e.printStackTrace();
 						System.exit(CAN_NOT_INSTANTIATE_INDIVIDUAL);
 					}

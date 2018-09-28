@@ -7,7 +7,7 @@ package de.uni.bielefeld.sc.hterhors.psink.obie.core.ontology.interfaces;
  *
  *         Dec 7, 2017
  */
-public interface IDataType {
+public interface IDatatype {
 
 	/***/
 	public String getSemanticValue();

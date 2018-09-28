@@ -10,12 +10,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.ontology.AbstractOntologyEnvironment;
-import de.uni.bielefeld.sc.hterhors.psink.obie.core.projects.AbstractProjectEnvironment;
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.owlreader.ECardinalityType;
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.owlreader.OWLReader;
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.owlreader.container.OntologyClass;
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.owlreader.container.OntologySlotData;
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.JavaClassNamingTools;
-import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader.ECardinalityType;
-import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader.OWLReader;
-import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader.container.OntologyClass;
-import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader.container.OntologySlotData;
 
 public class OWLToAnnoDBConfigurationConverter {
 
@@ -37,8 +36,7 @@ public class OWLToAnnoDBConfigurationConverter {
 		if (!parent.exists())
 			parent.mkdirs();
 
-		this.dataProvider = new OWLReader(environment.getOwlClassFilter(), environment.getAdditionalPropertyNames(),
-				environment.getAdditionalPrefixes(), environment.getOntologyFile());
+		this.dataProvider = new OWLReader(environment);
 		try {
 			write();
 		} catch (FileNotFoundException e) {

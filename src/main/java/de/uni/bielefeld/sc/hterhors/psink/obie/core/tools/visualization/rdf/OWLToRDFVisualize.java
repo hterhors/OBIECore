@@ -13,11 +13,10 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.ontology.AbstractOntologyEnvironment;
-import de.uni.bielefeld.sc.hterhors.psink.obie.core.projects.AbstractProjectEnvironment;
-import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader.ECardinalityType;
-import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader.OWLReader;
-import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader.container.OntologyClass;
-import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader.container.OntologySlotData;
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.owlreader.ECardinalityType;
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.owlreader.OWLReader;
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.owlreader.container.OntologyClass;
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.owlreader.container.OntologySlotData;
 
 public class OWLToRDFVisualize {
 
@@ -26,8 +25,7 @@ public class OWLToRDFVisualize {
 
 	public OWLToRDFVisualize(AbstractOntologyEnvironment env, OWLReader dataProvider) throws Exception {
 		this.env = env;
-		this.dataProvider = new OWLReader(env.getOwlClassFilter(), env.getAdditionalPropertyNames(),
-				env.getAdditionalPrefixes(), env.getOntologyFile());
+		this.dataProvider = new OWLReader(env);
 
 		Model model = ModelFactory.createDefaultModel();
 

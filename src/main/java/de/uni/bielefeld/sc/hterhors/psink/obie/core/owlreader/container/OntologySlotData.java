@@ -1,12 +1,12 @@
-package de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader.container;
+package de.uni.bielefeld.sc.hterhors.psink.obie.core.owlreader.container;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.owlreader.ECardinalityType;
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.JavaClassNamingTools;
-import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader.ECardinalityType;
 
 public class OntologySlotData implements Serializable {
 

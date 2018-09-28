@@ -1,4 +1,4 @@
-package de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader.container;
+package de.uni.bielefeld.sc.hterhors.psink.obie.core.owlreader.container;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.owlreader.EDatatypeRestriction;
 import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.JavaClassNamingTools;
-import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader.EDatatypeRestriction;
 
 public class OntologyClass implements Serializable {
 
@@ -139,8 +139,7 @@ public class OntologyClass implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
-		result = prime * result + ((ontologyClassName == null) ? 0 : ontologyClassName.hashCode());
+		result = prime * result + ((fullyQualifiedOntolgyName == null) ? 0 : fullyQualifiedOntolgyName.hashCode());
 		return result;
 	}
 
@@ -153,15 +152,10 @@ public class OntologyClass implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		OntologyClass other = (OntologyClass) obj;
-		if (namespace == null) {
-			if (other.namespace != null)
+		if (fullyQualifiedOntolgyName == null) {
+			if (other.fullyQualifiedOntolgyName != null)
 				return false;
-		} else if (!namespace.equals(other.namespace))
-			return false;
-		if (ontologyClassName == null) {
-			if (other.ontologyClassName != null)
-				return false;
-		} else if (!ontologyClassName.equals(other.ontologyClassName))
+		} else if (!fullyQualifiedOntolgyName.equals(other.fullyQualifiedOntolgyName))
 			return false;
 		return true;
 	}

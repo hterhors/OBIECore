@@ -1,4 +1,4 @@
-package de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader;
+package de.uni.bielefeld.sc.hterhors.psink.obie.core.owlreader;
 
 import java.util.List;
 import java.util.Map;

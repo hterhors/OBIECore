@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
-import de.uni.bielefeld.sc.hterhors.psink.obie.core.tools.owlreader.IClassFilter;
+import de.uni.bielefeld.sc.hterhors.psink.obie.core.owlreader.IClassFilter;
 
 public abstract class AbstractOntologyEnvironment implements Serializable {
 

@@ -32,13 +32,13 @@ public class ConvertRawCorpusToSANTOFormat {
 
 		for (Instance document : corpus.getInstances().values()) {
 
-			File annotationOutputFile = new File(parentCorpusDirectory, document.documentName + ".annodb");
-			File csvOutputFile = new File(parentCorpusDirectory, document.documentName + ".csv");
+			File annotationOutputFile = new File(parentCorpusDirectory, document.name + ".annodb");
+			File csvOutputFile = new File(parentCorpusDirectory, document.name + ".csv");
 
 			List<AnnoDBAnnotation> annoDBAnnotations = convertAnnotations(document);
 
 			try {
-				writeCSVFile(csvOutputFile, document.documentContent);
+				writeCSVFile(csvOutputFile, document.content);
 				writeAnnoDBFile(annotationOutputFile, annoDBAnnotations);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -116,7 +116,7 @@ public class ConvertRawCorpusToSANTOFormat {
 		/**
 		 * TODO: dirty Hack! make onset and offset int values instead of long!
 		 */
-		String word = document.documentContent.substring(Integer.valueOf("" + onset), Integer.valueOf("" + offset));
+		String word = document.content.substring(Integer.valueOf("" + onset), Integer.valueOf("" + offset));
 
 		if (!word.equals(tokenValue)) {
 			throw new IllegalStateException("Annotation onset does not fit documents content.");

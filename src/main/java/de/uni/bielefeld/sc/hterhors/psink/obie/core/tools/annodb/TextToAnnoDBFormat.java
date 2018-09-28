@@ -46,7 +46,7 @@ public class TextToAnnoDBFormat {
 					.reduce("", (accumulatedStr, str) -> accumulatedStr + str + " ").trim();
 			List<String> sentences = SentenceSplitter.extractSentences(input);
 			List<Tokenization> tokens = RegExTokenizer.tokenize(sentences);
-			PrintStream ps = new PrintStream(new File("dbpedia/annodb/"+resource+".csv"));
+			PrintStream ps = new PrintStream(new File("dbpedia/annodb/" + resource + ".csv"));
 
 			for (Tokenization tokenization : tokens) {
 				int tokenIndex = 1;
