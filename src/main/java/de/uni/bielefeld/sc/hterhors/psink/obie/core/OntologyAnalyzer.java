@@ -61,7 +61,7 @@ public class OntologyAnalyzer {
 	 * @param root
 	 * @return set of root related scio classes.
 	 */
-	public static Set<Class<? extends IOBIEThing>> getRelatedClassesTypesUnderRoot(Class<? extends IOBIEThing> root) {
+	public static Set<Class<? extends IOBIEThing>> getRelatedClassTypesUnderRoot(Class<? extends IOBIEThing> root) {
 		Set<Class<? extends IOBIEThing>> relatedClasses = new HashSet<>();
 		getRelatedClassTypesUnderRoot(relatedClasses, root);
 		return relatedClasses;
