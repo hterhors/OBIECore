@@ -16,8 +16,6 @@ public abstract class AbstractOntologyEnvironment implements Serializable {
 
 	public final String PACKAGE_PREFIX = "package ";
 
-	public final String OBIE_ANNOTATIONS_PACKAGE_NAME = "de.uni.bielefeld.sc.hterhors.psink.obie.annotations.*";
-
 	public final String OBIE_CLASSES_PACKAGE_NAME = getBasePackage() + "classes.";
 	public final String OBIE_INTERFACES_PACKAGE_NAME = getBasePackage() + "interfaces.";
 

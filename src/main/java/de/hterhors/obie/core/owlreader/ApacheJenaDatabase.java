@@ -37,7 +37,7 @@ public class ApacheJenaDatabase {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} catch (JenaException je) {
+		} catch (Exception je) {
 			System.err.println("ERROR" + je.getMessage());
 			je.printStackTrace();
 			System.exit(0);
