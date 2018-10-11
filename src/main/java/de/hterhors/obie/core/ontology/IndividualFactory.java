@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.jena.sparql.pfunction.library.concat;
-
 import de.hterhors.obie.core.owlreader.OWLReader;
 import de.hterhors.obie.core.owlreader.container.OntologyClass;
 
@@ -18,14 +16,24 @@ public class IndividualFactory<I extends AbstractOBIEIndividual> {
 
 	final private Map<String, I> possibleInstances = new HashMap<>();
 
+	/**
+	 * Flag that tells if this individual factory was initialized or not.
+	 */
+	private boolean initialized = false;
+
 	public Collection<AbstractOBIEIndividual> getIndividuals() {
-		/**
-		 * TODO: Use Set?
-		 */
+		if (!initialized) {
+			throw new IllegalStateException(
+					"IndividualFactory not initialized. Call OntologyInitializer.initializeOntology(ontologyEnvironment);");
+		}
 		return Collections.unmodifiableCollection(possibleInstances.values());
 	}
 
 	public I getIndividualByURI(String URI) {
+		if (!initialized) {
+			throw new IllegalStateException(
+					"IndividualFactory not initialized. Call OntologyInitializer.initializeOntology(ontologyEnvironment);");
+		}
 		if (!possibleInstances.containsKey(URI)) {
 			throw new IllegalStateException("Illegal individual:" + URI);
 		}
@@ -33,6 +41,10 @@ public class IndividualFactory<I extends AbstractOBIEIndividual> {
 	}
 
 	public Set<String> getIndividualURIs() {
+		if (!initialized) {
+			throw new IllegalStateException(
+					"IndividualFactory not initialized. Call OntologyInitializer.initializeOntology(ontologyEnvironment);");
+		}
 		return Collections.unmodifiableSet(possibleInstances.keySet());
 	}
 
@@ -45,9 +57,10 @@ public class IndividualFactory<I extends AbstractOBIEIndividual> {
 	 * @param owlReader
 	 */
 	@SuppressWarnings("unused")
-	private void sys_init(Class<I> individualClassType, OntologyClass ontologicalClass, OWLReader owlReader) {
+	private synchronized void sys_init(Class<I> individualClassType, OntologyClass ontologicalClass,
+			OWLReader owlReader) {
 
-		if (!possibleInstances.isEmpty())
+		if (initialized)
 			throw new IllegalStateException("Already initialized...");
 
 		owlReader.classes.stream().filter(c -> c.isNamedIndividual)
@@ -64,5 +77,6 @@ public class IndividualFactory<I extends AbstractOBIEIndividual> {
 					}
 				});
 
+		initialized = true;
 	}
 }
