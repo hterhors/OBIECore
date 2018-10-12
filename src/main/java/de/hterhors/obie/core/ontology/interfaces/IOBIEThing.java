@@ -11,7 +11,7 @@ import de.hterhors.obie.core.ontology.AbstractOBIEIndividual;
 import de.hterhors.obie.core.ontology.IndividualFactory;
 
 public interface IOBIEThing extends Serializable {
-	
+
 	static final Map<Class<? extends IOBIEThing>, Constructor<? extends IOBIEThing>> cloneConstructor = new HashMap<>();
 
 	public static class Score {
@@ -49,8 +49,8 @@ public interface IOBIEThing extends Serializable {
 		return null;
 	}
 
-	/***/
-	public String getAnnotationID();
+	// /***/
+//	public String getAnnotationID();
 
 	/***/
 	public Integer getCharacterOffset();
@@ -76,12 +76,10 @@ public interface IOBIEThing extends Serializable {
 	/***/
 	public void setCharacterOnset(Integer onset);
 
-	
 	public static Constructor<? extends IOBIEThing> getCloneConstructor(Class<? extends IOBIEThing> obieClazz) {
 		try {
 
 			Constructor<? extends IOBIEThing> values;
-
 
 			if ((values = cloneConstructor.get(obieClazz)) == null) {
 				values = obieClazz.getDeclaredConstructor(obieClazz);
@@ -96,5 +94,5 @@ public interface IOBIEThing extends Serializable {
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
-	
+
 }

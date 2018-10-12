@@ -20,10 +20,10 @@ public class EmptyOBIEInstance implements IOBIEThing {
 	private EmptyOBIEInstance() {
 	}
 
-	@Override
-	public String getAnnotationID() {
-		return null;
-	}
+//	@Override
+//	public String getAnnotationID() {
+//		return null;
+//	}
 
 	@Override
 	public Integer getCharacterOffset() {
