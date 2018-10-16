@@ -34,6 +34,10 @@ public class IndividualFactory<I extends AbstractOBIEIndividual> {
 			throw new IllegalStateException(
 					"IndividualFactory not initialized. Call OntologyInitializer.initializeOntology(ontologyEnvironment);");
 		}
+
+		if (URI == null)
+			return null;
+
 		if (!possibleInstances.containsKey(URI)) {
 			throw new IllegalStateException("Illegal individual:" + URI);
 		}
