@@ -3,6 +3,7 @@ package de.hterhors.obie.core.ontology;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import de.hterhors.obie.core.ontology.annotations.DatatypeProperty;
 import de.hterhors.obie.core.ontology.interfaces.IOBIEThing;
 import de.hterhors.obie.core.owlreader.OWLReader;
 import de.hterhors.obie.core.owlreader.container.OntologyClass;
@@ -19,7 +20,6 @@ public class OntologyInitializer {
 	public static void initializeOntology(AbstractOntologyEnvironment ontologyEnvironment) {
 
 		try {
-
 			final OWLReader owlReader = new OWLReader(ontologyEnvironment);
 
 			Method systemInitMethod = IndividualFactory.class.getDeclaredMethod(INDIVIDUAL_FACTORY_INIT_METHOD_NAME,
@@ -30,12 +30,16 @@ public class OntologyInitializer {
 
 				if (oc.isNamedIndividual)
 					continue;
-				if (oc.isDataType)
-					continue;
+
+//				if (oc.isDataType)
+//					continue;
 
 				@SuppressWarnings("unchecked")
 				Class<? extends IOBIEThing> individualFactoryClass = (Class<? extends IOBIEThing>) Class
 						.forName(ontologyEnvironment.OBIE_CLASSES_PACKAGE_NAME + oc.javaClassName);
+
+				if (individualFactoryClass.isAnnotationPresent(DatatypeProperty.class))
+					continue;
 
 				Field individualFactoryField = individualFactoryClass.getField(INDIVIDUAL_FACTORY_FIELD_NAME);
 
