@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -68,7 +69,6 @@ public class OWLReader implements Serializable {
 	private final static String VARIABLE_NAME_SUPERCLASS = "superclass";
 
 	private static final String VARIABLE_NAME_ADDITIONAL_INFO = "additionalInfo";
-	private final static String VARIABLE_NAME_RELATION_TYPE = "relationType";
 
 	private static final String VARIABLE_NAME_DT_RESTRICTION = "restriction";
 
@@ -81,6 +81,11 @@ public class OWLReader implements Serializable {
 	private static final String OWL_CLASS_NAME = "http://www.w3.org/2002/07/owl#Class";
 
 	private static final String OWL_NAMED_INDIVIDUAL_NAME = "http://www.w3.org/2002/07/owl#NamedIndividual";
+
+	private static final String VARIABLE_NAME_PROPERTY_CONSTRAINT = "propConstrainT";
+
+	private static final String FUNCTIONAL_PROPERTY = "http://www.w3.org/2002/07/owl#FunctionalProperty";
+	private static final String OBJECT_PROPERTY = "http://www.w3.org/2002/07/owl#ObjectProperty";
 
 	public boolean irgnoreOWLClasses = true;
 
@@ -122,7 +127,7 @@ public class OWLReader implements Serializable {
 
 		collectObjectProperties(db);
 
-		collectDomainUnionOfDatatypeProperties(db);
+//		collectDomainUnionOfDatatypeProperties(db);
 
 		collectNamedIndividuals(db);
 
@@ -184,52 +189,73 @@ public class OWLReader implements Serializable {
 	private void collectAdditionalInfoForProperties(ApacheJenaDatabase db) {
 
 		/**
-		 * Ugly do it twice wit h true and false as default.
+		 * Ugly do it twice with true and false as default.
 		 */
-		for (String property : additionalInfoVariableNames) {
-			for (Map<String, RDFObject> data : extractAdditionalInfoForProperties(db, property).queryData) {
+		for (Boolean functional : Arrays.asList(true, false)) {
 
-				final RDFObject doc = data.get(VARIABLE_NAME_ADDITIONAL_INFO);
+			for (String property : additionalInfoVariableNames) {
+				for (Map<String, RDFObject> data : extractAdditionalInfoForProperties(db, property,
+						functional).queryData) {
 
-				if (doc == null)
-					continue;
+					final RDFObject doc = data.get(VARIABLE_NAME_ADDITIONAL_INFO);
 
-				final ECardinalityType cardinality = getCardinalityFromRelationType(data);
+					if (doc == null)
+						continue;
 
-				OntologySlotData defaultSlot = propertyFactory(data.get(VARIABLE_NAME_DOMAIN).value, cardinality, true);
+					final ECardinalityType cardinality = getCardinality(data);
 
-				defaultSlot.documentation.putIfAbsent(property, new ArrayList<>());
-				defaultSlot.documentation.get(property).add(doc.value);
+					OntologySlotData defaultSlot = propertyFactory(data.get(VARIABLE_NAME_DOMAIN).value, cardinality,
+							true);
 
-				OntologySlotData nonDefault = propertyFactory(data.get(VARIABLE_NAME_DOMAIN).value, cardinality, false);
+					defaultSlot.documentation.putIfAbsent(property, new ArrayList<>());
+					defaultSlot.documentation.get(property).add(doc.value);
 
-				nonDefault.documentation.put(property, new ArrayList<>());
-				nonDefault.documentation.get(property).add(doc.value);
+					OntologySlotData nonDefault = propertyFactory(data.get(VARIABLE_NAME_DOMAIN).value, cardinality,
+							false);
+
+					nonDefault.documentation.put(property, new ArrayList<>());
+					nonDefault.documentation.get(property).add(doc.value);
+				}
 			}
 		}
 
 	}
 
 	private void collectObjectProperties(ApacheJenaDatabase db) {
-		for (Map<String, RDFObject> data : extractObjectProperties(db).queryData) {
 
-			OntologyClass domainClass = classFactory(data.get(VARIABLE_NAME_DOMAIN).value, false, defaultPrefix);
-			OntologyClass rangeClass = classFactory(data.get(VARIABLE_NAME_RANGE).value, false, defaultPrefix);
+		for (Boolean propConstraint : Arrays.asList(true, false)) {
 
-			final ECardinalityType cardinality = getCardinalityFromRelationType(data);
+			for (Map<String, RDFObject> data : extractObjectProperties(db, propConstraint).queryData) {
 
-			OntologySlotData relation = propertyFactory(data.get(VARIABLE_NAME_PROPERTY).value, cardinality, true);
+				OntologyClass domainClass = classFactory(data.get(VARIABLE_NAME_DOMAIN).value, false, defaultPrefix);
+				OntologyClass rangeClass = classFactory(data.get(VARIABLE_NAME_RANGE).value, false, defaultPrefix);
 
-			this.classes.add(domainClass);
-			this.classes.add(rangeClass);
+				final ECardinalityType cardinality = getCardinality(data);
 
-			domainClass.domainRangeRelations.putIfAbsent(relation, new HashSet<>());
-			domainClass.domainRangeRelations.get(relation).add(rangeClass);
+				OntologySlotData relation = propertyFactory(data.get(VARIABLE_NAME_PROPERTY).value, cardinality, true);
+
+				this.classes.add(domainClass);
+				this.classes.add(rangeClass);
+
+				domainClass.domainRangeRelations.putIfAbsent(relation, new HashSet<>());
+				domainClass.domainRangeRelations.get(relation).add(rangeClass);
+			}
 		}
+	}
+
+	private ECardinalityType getCardinality(Map<String, RDFObject> data) {
+
+		if (data.containsKey(VARIABLE_NAME_PROPERTY_CONSTRAINT)
+				&& data.get(VARIABLE_NAME_PROPERTY_CONSTRAINT).value.equals(FUNCTIONAL_PROPERTY))
+			return ECardinalityType.SINGLE;
+
+		return ECardinalityType.COLLECTION;
+
 	}
 
 	private void collectExactCardinalityProperties(ApacheJenaDatabase db) {
 		for (Map<String, RDFObject> data : extractExactCardinalities(db).queryData) {
+
 			OntologyClass domainClass = classFactory(data.get(VARIABLE_NAME_DOMAIN).value, false, defaultPrefix);
 
 			OntologyClass rangeClass = classFactory(data.get(VARIABLE_NAME_RANGE).value, false, defaultPrefix);
@@ -254,7 +280,7 @@ public class OWLReader implements Serializable {
 			 * object type property.
 			 */
 			domainClass.domainRangeRelations
-					.remove(propertyFactory(data.get(VARIABLE_NAME_PROPERTY).value, ECardinalityType.SINGLE, true));
+					.remove(propertyFactory(data.get(VARIABLE_NAME_PROPERTY).value, ECardinalityType.COLLECTION, true));
 
 			domainClass.domainRangeRelations.putIfAbsent(relation, new HashSet<>());
 			domainClass.domainRangeRelations.get(relation).add(rangeClass);
@@ -263,6 +289,7 @@ public class OWLReader implements Serializable {
 
 	private void collectMinCardinalityProperties(ApacheJenaDatabase db) {
 		for (Map<String, RDFObject> data : extractMinCardinalities(db).queryData) {
+
 			OntologyClass domainClass = classFactory(data.get(VARIABLE_NAME_DOMAIN).value, false, defaultPrefix);
 			OntologySlotData relation = propertyFactory(data.get(VARIABLE_NAME_PROPERTY).value,
 					ECardinalityType.COLLECTION, false);
@@ -307,9 +334,9 @@ public class OWLReader implements Serializable {
 	}
 
 	private void collectDomainUnionOfDatatypeProperties(ApacheJenaDatabase db) {
-		for (Map<String, RDFObject> data : extractDomainUnionOfDatatypeProperties(db).queryData) {
+		throw new NotImplementedException("extractDomainUnionOfDatatypeProperties is not implemented yet.");
+//		for (Map<String, RDFObject> data : extractDomainUnionOfDatatypeProperties(db).queryData) {
 //			System.err.println(data);
-			throw new NotImplementedException("extractDomainUnionOfDatatypeProperties is not implemented yet.");
 //
 //			DataClass domainClass = dataClassFactory(list.get(2).value, false);
 //			DataClass rangeClass = dataClassFactory(list.get(1).value, false);
@@ -320,24 +347,27 @@ public class OWLReader implements Serializable {
 //
 //			domainClass.domainRangeRelations.putIfAbsent(relation, new HashSet<>());
 //			domainClass.domainRangeRelations.get(relation).add(rangeClass);
-		}
+//		}
 	}
 
 	private void collectDomainUnionOfObjectProperties(ApacheJenaDatabase db) {
-		for (Map<String, RDFObject> data : extractDomainUnionOfObjectProperties(db).queryData) {
+		for (boolean functional : Arrays.asList(false, true)) {
 
-			OntologyClass domainClass = classFactory(data.get(VARIABLE_NAME_DOMAIN).value, false, defaultPrefix);
-			OntologyClass rangeClass = classFactory(data.get(VARIABLE_NAME_RANGE).value, false, defaultPrefix);
+			for (Map<String, RDFObject> data : extractDomainUnionOfObjectProperties(db, functional).queryData) {
 
-			final ECardinalityType cardinality = getCardinalityFromRelationType(data);
+				OntologyClass domainClass = classFactory(data.get(VARIABLE_NAME_DOMAIN).value, false, defaultPrefix);
+				OntologyClass rangeClass = classFactory(data.get(VARIABLE_NAME_RANGE).value, false, defaultPrefix);
 
-			OntologySlotData relation = propertyFactory(data.get(VARIABLE_NAME_PROPERTY).value, cardinality, true);
+				final ECardinalityType cardinality = getCardinality(data);
 
-			this.classes.add(domainClass);
-			this.classes.add(rangeClass);
+				OntologySlotData relation = propertyFactory(data.get(VARIABLE_NAME_PROPERTY).value, cardinality, true);
 
-			domainClass.domainRangeRelations.putIfAbsent(relation, new HashSet<>());
-			domainClass.domainRangeRelations.get(relation).add(rangeClass);
+				this.classes.add(domainClass);
+				this.classes.add(rangeClass);
+
+				domainClass.domainRangeRelations.putIfAbsent(relation, new HashSet<>());
+				domainClass.domainRangeRelations.get(relation).add(rangeClass);
+			}
 		}
 	}
 
@@ -359,45 +389,35 @@ public class OWLReader implements Serializable {
 	}
 
 	private void collectDataTypeProperties(ApacheJenaDatabase db) {
-		for (Map<String, RDFObject> data : extractDatatypeProperties(db).queryData) {
 
-			final EDatatypeRestriction restriction = mapRestriction(data.get(VARIABLE_NAME_DT_RESTRICTION));
+		for (boolean functional : Arrays.asList(false, true)) {
 
-			final OntologyClass domainClass = dataClassFactory(data.get(VARIABLE_NAME_DOMAIN).value, defaultPrefix);
+			for (Map<String, RDFObject> data : extractDatatypeProperties(db, functional).queryData) {
 
-			final ECardinalityType cardinality = getCardinalityFromRelationType(data);
+				final EDatatypeRestriction restriction = mapRestriction(data.get(VARIABLE_NAME_DT_RESTRICTION));
 
-			final OntologySlotData relation = propertyFactory(data.get(VARIABLE_NAME_PROPERTY).value, cardinality,
-					true);
-			/*
-			 * Create artificial class for datatype properties.
-			 */
-			final OntologyClass datatypeRangeClass = classFactory(data.get(VARIABLE_NAME_PROPERTY).value, true,
-					defaultPrefix);
+				final OntologyClass domainClass = dataClassFactory(data.get(VARIABLE_NAME_DOMAIN).value, defaultPrefix);
 
-			datatypeRangeClass.restriction = restriction;
+				final ECardinalityType cardinality = getCardinality(data);
 
-			this.classes.add(domainClass);
-			this.classes.add(datatypeRangeClass);
+				final OntologySlotData relation = propertyFactory(data.get(VARIABLE_NAME_PROPERTY).value, cardinality,
+						true);
+				/*
+				 * Create artificial class for datatype properties.
+				 */
+				final OntologyClass datatypeRangeClass = classFactory(data.get(VARIABLE_NAME_PROPERTY).value, true,
+						defaultPrefix);
 
-			domainClass.domainRangeRelations.putIfAbsent(relation, new HashSet<>());
-			domainClass.domainRangeRelations.get(relation).add(datatypeRangeClass);
+				datatypeRangeClass.restriction = restriction;
 
+				this.classes.add(domainClass);
+				this.classes.add(datatypeRangeClass);
+
+				domainClass.domainRangeRelations.putIfAbsent(relation, new HashSet<>());
+				domainClass.domainRangeRelations.get(relation).add(datatypeRangeClass);
+
+			}
 		}
-	}
-
-	private ECardinalityType getCardinalityFromRelationType(Map<String, RDFObject> data) {
-		final ECardinalityType cardinality;
-		if (data.containsKey(VARIABLE_NAME_RELATION_TYPE)) {
-			final int value = Integer.parseInt(data.get(VARIABLE_NAME_RELATION_TYPE).value);
-			cardinality = ECardinalityType.map(value);
-		} else {
-			/*
-			 * TODO: DEFAULT
-			 */
-			cardinality = ECardinalityType.SINGLE;
-		}
-		return cardinality;
 	}
 
 	private void collectClasses(ApacheJenaDatabase db) {
@@ -554,21 +574,25 @@ public class OWLReader implements Serializable {
 
 	}
 
-	private QueryResult extractAdditionalInfoForProperties(ApacheJenaDatabase db, final String property) {
+	private QueryResult extractAdditionalInfoForProperties(ApacheJenaDatabase db, final String propertyName,
+			final boolean functional) {
 		log.debug("_________Extract additional info for properties__________");
 		return db.select(allPrefixes +
 //				
-				"select distinct ?" + VARIABLE_NAME_DOMAIN + " (STR(?addInfo) as ?" + VARIABLE_NAME_ADDITIONAL_INFO
-				+ ") (STR(?relTyp) AS ?" + VARIABLE_NAME_RELATION_TYPE + ") where { "
+				"select distinct ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " ?" + VARIABLE_NAME_DOMAIN + " (STR(?addInfo) as ?" + VARIABLE_NAME_ADDITIONAL_INFO
+				+ ") where { "
 //				
 				+ " ?" + VARIABLE_NAME_DOMAIN + " ?x ?y."
 //
 				+ " { ?" + VARIABLE_NAME_DOMAIN + " a owl:ObjectProperty.} UNION {?" + VARIABLE_NAME_DOMAIN
 				+ " a owl:DatatypeProperty.}"
 //				
-				+ " ?" + VARIABLE_NAME_DOMAIN + " " + property + " ?addInfo ."
-//						
-				+ "OPTIONAL {?" + VARIABLE_NAME_PROPERTY + " scio:relationType ?relTyp} ."
+				+ " ?" + VARIABLE_NAME_DOMAIN + " " + propertyName + " ?addInfo ."
+//				
+				+ "?" + VARIABLE_NAME_PROPERTY + " a ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " ."
+
+				+ (functional ? " FILTER ( ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " = owl:FunctionalProperty )"
+						: "FILTER NOT EXISTS { ?" + VARIABLE_NAME_PROPERTY + " a owl:FunctionalProperty } ")
 
 				+ "FILTER(STRSTARTS(STR(?y), \"http:\"))"
 //
@@ -640,11 +664,11 @@ public class OWLReader implements Serializable {
 				+ "FILTER(STRSTARTS(STR(?" + VARIABLE_NAME_SUPERCLASS + "), \"http://\"))" + "}");
 	}
 
-	private QueryResult extractDomainUnionOfDatatypeProperties(ApacheJenaDatabase db) {
+	private QueryResult extractDomainUnionOfDatatypeProperties(ApacheJenaDatabase db, final boolean functional) {
 		log.debug("_________Extract domain-unionOf datatypeProperties__________");
 		return db.select(allPrefixes
 //				
-				+ "select ?" + VARIABLE_NAME_DOMAIN + " ?" + VARIABLE_NAME_PROPERTY + " ?" + VARIABLE_NAME_RANGE
+				+ "select ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " ?" + VARIABLE_NAME_DOMAIN + " ?" + VARIABLE_NAME_PROPERTY + " ?" + VARIABLE_NAME_RANGE
 				+ " where {"
 //
 				+ "?" + VARIABLE_NAME_PROPERTY + " a owl:DatatypeProperty ."
@@ -655,17 +679,21 @@ public class OWLReader implements Serializable {
 //
 				+ " ?u rdf:rest*/rdf:first ?" + VARIABLE_NAME_DOMAIN + " ."
 //
+				+ "?" + VARIABLE_NAME_PROPERTY + " a ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " ."
+//					
 				+ "OPTIONAL{ ?" + VARIABLE_NAME_PROPERTY + " rdfs:range ?" + VARIABLE_NAME_RANGE + "} ."
-//						
+
+				+ (functional ? " FILTER ( ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " = owl:FunctionalProperty )"
+						: "FILTER NOT EXISTS { ?" + VARIABLE_NAME_PROPERTY + " a owl:FunctionalProperty } ")
+//			
 				+ "FILTER(STRSTARTS(STR(?" + VARIABLE_NAME_DOMAIN + "), \"http:\"))}");
 	}
 
-	private QueryResult extractDomainUnionOfObjectProperties(ApacheJenaDatabase db) {
+	private QueryResult extractDomainUnionOfObjectProperties(ApacheJenaDatabase db, final boolean functional) {
 		log.debug("_________Extract domain-unionOf objectProperties__________");
 		return db.select(allPrefixes
 //				
-				+ "select ?" + VARIABLE_NAME_PROPERTY + " ?" + VARIABLE_NAME_RANGE + " ?" + VARIABLE_NAME_DOMAIN
-				+ "(STR(?relTyp) AS ?" + VARIABLE_NAME_RELATION_TYPE + ") "
+				+ "select ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " ?" + VARIABLE_NAME_PROPERTY + " ?" + VARIABLE_NAME_RANGE + " ?" + VARIABLE_NAME_DOMAIN
 //
 				+ " where {"
 //
@@ -679,19 +707,19 @@ public class OWLReader implements Serializable {
 //
 				+ " ?u rdf:rest*/rdf:first ?" + VARIABLE_NAME_DOMAIN + " ."
 //
-				+ "OPTIONAL {?" + VARIABLE_NAME_PROPERTY + " scio:relationType ?relTyp} ."
-//						
+				+ "?" + VARIABLE_NAME_PROPERTY + " a ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " ."
+
+				+ (functional ? " FILTER ( ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " = owl:FunctionalProperty )"
+						: "FILTER NOT EXISTS { ?" + VARIABLE_NAME_PROPERTY + " a owl:FunctionalProperty } ")
 				+ "FILTER(STRSTARTS(STR(?" + VARIABLE_NAME_DOMAIN + "), \"http:\"))" + "}");
 	}
 
-	private QueryResult extractDatatypeProperties(ApacheJenaDatabase db) {
+	private QueryResult extractDatatypeProperties(ApacheJenaDatabase db, final boolean functional) {
 		log.debug("_________Extract DatatypeProperties__________");
 		return db.select(allPrefixes
 				//
-				+ "select  ?a ?b ?base ?" + VARIABLE_NAME_DT_RESTRICTION + " ?" + VARIABLE_NAME_DOMAIN + " ?"
+				+ " select ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " ?" + VARIABLE_NAME_DT_RESTRICTION + " ?" + VARIABLE_NAME_DOMAIN + " ?"
 				+ VARIABLE_NAME_PROPERTY + " ?" + VARIABLE_NAME_RANGE
-				//
-				+ "(STR(?relTyp) AS ?" + VARIABLE_NAME_RELATION_TYPE + ") "
 				//
 				+ " where {"
 				//
@@ -699,24 +727,27 @@ public class OWLReader implements Serializable {
 				//
 				+ "?" + VARIABLE_NAME_PROPERTY + " a owl:DatatypeProperty. "
 				//
-				+ "OPTIONAL {?" + VARIABLE_NAME_PROPERTY + " owl:onDatatype  ?" + VARIABLE_NAME_DT_RESTRICTION + ". "
-				+ "} ."
+				+ "?" + VARIABLE_NAME_PROPERTY + " a ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " ."
 //
-				+ "OPTIONAL {?" + VARIABLE_NAME_PROPERTY + " scio:relationType ?relTyp} ."
+				+ "OPTIONAL {?" + VARIABLE_NAME_PROPERTY + " owl:onDatatype  ?" + VARIABLE_NAME_DT_RESTRICTION + "} ."
+//
 				//
-				+ "OPTIONAL{?" + VARIABLE_NAME_PROPERTY + " rdfs:range ?" + VARIABLE_NAME_RANGE + "}. "
+				+ "OPTIONAL{?" + VARIABLE_NAME_PROPERTY + " rdfs:range ?" + VARIABLE_NAME_RANGE + "} . "
 				//
-				+ "OPTIONAL{?" + VARIABLE_NAME_PROPERTY + " scio: ?" + VARIABLE_NAME_CARDINALITY + "}. "
+				+ "OPTIONAL{?" + VARIABLE_NAME_PROPERTY + " scio: ?" + VARIABLE_NAME_CARDINALITY + "} . "
 				//
-				+ "FILTER(STRSTARTS(STR(?" + VARIABLE_NAME_DOMAIN + "), \"http:\"))}");
+
+				+ (functional ? " FILTER ( ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " = owl:FunctionalProperty )"
+						: "FILTER NOT EXISTS { ?" + VARIABLE_NAME_PROPERTY + " a owl:FunctionalProperty } ")
+				+ " FILTER(STRSTARTS(STR(?" + VARIABLE_NAME_DOMAIN + "), \"http:\"))}");
 	}
 
-	private QueryResult extractObjectProperties(ApacheJenaDatabase db) {
+	private QueryResult extractObjectProperties(ApacheJenaDatabase db, final boolean functional) {
 		log.debug("__________Extract ObjectType Properties_________");
 		return db.select(allPrefixes +
 //				
-				"select ?" + VARIABLE_NAME_DOMAIN + " ?" + VARIABLE_NAME_PROPERTY + " ?" + VARIABLE_NAME_RANGE
-				+ " (STR(?relTyp) AS ?" + VARIABLE_NAME_RELATION_TYPE + ") " + " where {"
+				" select ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " ?" + VARIABLE_NAME_DOMAIN + " ?" + VARIABLE_NAME_PROPERTY + " ?" + VARIABLE_NAME_RANGE
+				+ " where {"
 //
 				+ "?" + VARIABLE_NAME_PROPERTY + " a owl:ObjectProperty. "
 //			
@@ -724,8 +755,11 @@ public class OWLReader implements Serializable {
 //			
 				+ "?" + VARIABLE_NAME_PROPERTY + " rdfs:domain ?" + VARIABLE_NAME_DOMAIN + ". "
 //						
-				+ "OPTIONAL {?" + VARIABLE_NAME_PROPERTY + " scio:relationType ?relTyp} ."
-//			
+				+ "?" + VARIABLE_NAME_PROPERTY + " a ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " ."
+
+				+ (functional ? " FILTER ( ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " = owl:FunctionalProperty )"
+						: "FILTER NOT EXISTS { ?" + VARIABLE_NAME_PROPERTY + " a owl:FunctionalProperty } ")
+//
 				+ "FILTER(STRSTARTS(STR(?" + VARIABLE_NAME_DOMAIN + "), \"http:\"))}");
 	}
 
