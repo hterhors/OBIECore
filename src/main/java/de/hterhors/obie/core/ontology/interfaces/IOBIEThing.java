@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.apache.jena.rdf.model.Model;
 
-import de.hterhors.obie.core.ontology.AbstractOBIEIndividual;
+import de.hterhors.obie.core.ontology.AbstractIndividual;
 import de.hterhors.obie.core.ontology.IndividualFactory;
 
 public interface IOBIEThing extends Serializable {
@@ -40,12 +40,11 @@ public interface IOBIEThing extends Serializable {
 		}
 
 	}
-
-	default public IndividualFactory<? extends AbstractOBIEIndividual> getIndividualFactory() {
+	default public IndividualFactory<? extends AbstractIndividual> getIndividualFactory() {
 		return null;
 	}
 
-	default public AbstractOBIEIndividual getIndividual() {
+	default public AbstractIndividual getIndividual() {
 		return null;
 	}
 

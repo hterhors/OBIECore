@@ -2,7 +2,7 @@ package de.hterhors.obie.core.ontology.instances;
 
 import org.apache.jena.rdf.model.Model;
 
-import de.hterhors.obie.core.ontology.AbstractOBIEIndividual;
+import de.hterhors.obie.core.ontology.AbstractIndividual;
 import de.hterhors.obie.core.ontology.IndividualFactory;
 import de.hterhors.obie.core.ontology.interfaces.IOBIEThing;
 
@@ -75,12 +75,12 @@ public class EmptyOBIEInstance implements IOBIEThing {
 	}
 
 	@Override
-	public IndividualFactory<? extends AbstractOBIEIndividual> getIndividualFactory() {
+	public IndividualFactory<? extends AbstractIndividual> getIndividualFactory() {
 		return null;
 	}
 
 	@Override
-	public AbstractOBIEIndividual getIndividual() {
+	public AbstractIndividual getIndividual() {
 		return null;
 	}
 

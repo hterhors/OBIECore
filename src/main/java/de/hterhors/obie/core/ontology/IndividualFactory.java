@@ -10,7 +10,7 @@ import java.util.Set;
 import de.hterhors.obie.core.owlreader.OWLReader;
 import de.hterhors.obie.core.owlreader.container.OntologyClass;
 
-public class IndividualFactory<I extends AbstractOBIEIndividual> {
+public class IndividualFactory<I extends AbstractIndividual> {
 
 	private static final int CAN_NOT_INSTANTIATE_INDIVIDUAL = -12345678;
 
@@ -21,7 +21,7 @@ public class IndividualFactory<I extends AbstractOBIEIndividual> {
 	 */
 	private boolean initialized = false;
 
-	public Collection<AbstractOBIEIndividual> getIndividuals() {
+	public Collection<AbstractIndividual> getIndividuals() {
 		if (!initialized) {
 			throw new IllegalStateException(
 					"IndividualFactory not initialized. Call OntologyInitializer.initializeOntology(ontologyEnvironment);");

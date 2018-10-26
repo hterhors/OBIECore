@@ -174,6 +174,7 @@ public class OntologyClass implements Serializable {
 								+ "\n")
 						.collect(Collectors.toList())
 				+ ", subclasses=" + subclasses.stream().map(d -> d.ontologyClassName).collect(Collectors.toList())
+				+ ", superclasses=" + superclasses.stream().map(d -> d.ontologyClassName).collect(Collectors.toList())
 				+ "]";
 
 	}

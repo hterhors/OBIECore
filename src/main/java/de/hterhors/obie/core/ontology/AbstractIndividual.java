@@ -2,7 +2,7 @@ package de.hterhors.obie.core.ontology;
 
 import java.io.Serializable;
 
-public class AbstractOBIEIndividual implements Serializable {
+public class AbstractIndividual implements Serializable {
 
 	/**
 	 * 
@@ -12,7 +12,7 @@ public class AbstractOBIEIndividual implements Serializable {
 	final public String name;
 	final public String nameSpace;
 
-	public AbstractOBIEIndividual(final String nameSpace, final String name) {
+	public AbstractIndividual(final String nameSpace, final String name) {
 		this.nameSpace = nameSpace;
 		this.name = name;
 	}
@@ -34,7 +34,7 @@ public class AbstractOBIEIndividual implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		AbstractOBIEIndividual other = (AbstractOBIEIndividual) obj;
+		AbstractIndividual other = (AbstractIndividual) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;
