@@ -25,4 +25,6 @@ public abstract class AbstractProjectEnvironment implements Serializable {
 
 	public abstract File getBigramCorpusFileDirectory();
 
+	public abstract String getCorpusPrefix();
+
 }

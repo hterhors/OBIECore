@@ -31,9 +31,6 @@ public class OntologyInitializer {
 				if (oc.isNamedIndividual)
 					continue;
 
-//				if (oc.isDataType)
-//					continue;
-
 				@SuppressWarnings("unchecked")
 				Class<? extends IOBIEThing> individualFactoryClass = (Class<? extends IOBIEThing>) Class
 						.forName(ontologyEnvironment.OBIE_CLASSES_PACKAGE_NAME + oc.javaClassName);

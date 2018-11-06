@@ -39,7 +39,7 @@ public abstract class AbstractOntologyEnvironment implements Serializable {
 
 	public abstract String getDataNameSpace();
 
-	public String getOntologyThingClassSimpleName() {
+	public final String getOntologyThingClassSimpleName() {
 		return "I" + getOntologyName() + "Thing";
 	}
 
@@ -56,11 +56,14 @@ public abstract class AbstractOntologyEnvironment implements Serializable {
 	 */
 	public abstract IClassFilter getOwlClassFilter();
 
-	public abstract String getOntologySourceLocation();
+	public final String getOntologySourceLocation() {
+		return "src/main/java/" + getBasePackage().replaceAll("\\.", "/");
+	}
 
 	public abstract int getOntologyVersion();
 
 	public abstract List<String> getAdditionalPropertyNames();
 
 	public abstract String getAdditionalPrefixes();
+
 }
