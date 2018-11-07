@@ -65,7 +65,7 @@ public class IndividualFactory<I extends AbstractIndividual> {
 			OWLReader owlReader) {
 
 		if (initialized)
-			throw new IllegalStateException("Already initialized...");
+			return;
 
 		owlReader.classes.stream().filter(c -> c.isNamedIndividual)
 				.filter(c -> c.superclasses.contains(ontologicalClass)).forEach(individual -> {

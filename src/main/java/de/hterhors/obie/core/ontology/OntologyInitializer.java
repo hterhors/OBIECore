@@ -46,6 +46,8 @@ public class OntologyInitializer {
 						owlReader);
 
 			}
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
