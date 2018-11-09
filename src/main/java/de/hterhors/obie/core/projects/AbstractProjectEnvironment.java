@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 import de.hterhors.obie.core.ontology.interfaces.IOBIEThing;
 
-public abstract class AbstractProjectEnvironment implements Serializable {
+public abstract class AbstractProjectEnvironment<T extends IOBIEThing> implements Serializable {
 
 	/**
 	 * 
@@ -19,7 +19,7 @@ public abstract class AbstractProjectEnvironment implements Serializable {
 
 	public final String OBIE_ANNOTATIONS_PACKAGE_NAME = "de.uni.bielefeld.sc.hterhors.psink.obie.annotations.*";
 
-	public abstract Class<? extends IOBIEThing> getOntologyThingInterface();
+	public abstract Class<? extends T> getOntologyThingInterface();
 
 	public abstract File getRawCorpusFile();
 

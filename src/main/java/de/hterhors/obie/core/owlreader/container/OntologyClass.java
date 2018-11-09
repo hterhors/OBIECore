@@ -1,8 +1,6 @@
 package de.hterhors.obie.core.owlreader.container;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -106,13 +104,9 @@ public class OntologyClass implements Serializable {
 	 */
 	public OntologyClass(String namespace, String ontologyName) {
 		this.namespace = namespace;
-		try {
-			this.ontologyClassName = URLDecoder.decode(ontologyName, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			throw new IllegalStateException(e.getMessage());
-		}
+		this.ontologyClassName = ontologyName;
 		this.fullyQualifiedOntolgyName = namespace + this.ontologyClassName;
+
 		this.javaClassName = JavaClassNamingTools.normalizeClassName(this.ontologyClassName);
 		this.javaInterfaceName = JavaClassNamingTools.toInterfaceName(this.javaClassName);
 		this.javaClassFieldName = JavaClassNamingTools.getVariableName(javaClassName);

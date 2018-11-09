@@ -440,18 +440,19 @@ public class OWLReader implements Serializable {
 			final String IRI = m.group(1);
 			final String relationName = m.group(2);
 
-			try {
-				OntologySlotData dr;
-				dr = new OntologySlotData(URLDecoder.decode(IRI, "UTF-8"), URLDecoder.decode(relationName, "UTF-8"),
-						cardinality, setByDefault);
+//			try {
+			OntologySlotData dr;
+			dr = new OntologySlotData(IRI, relationName, cardinality, setByDefault);
+//				dr = new OntologySlotData(URLDecoder.decode(IRI, "UTF-8"), URLDecoder.decode(relationName, "UTF-8"),
+//						cardinality, setByDefault);
 
-				slotFactory.put(key, dr);
-				return dr;
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-				System.exit(-1);
-			}
-			return null;
+			slotFactory.put(key, dr);
+			return dr;
+//			} catch (UnsupportedEncodingException e) {
+//				e.printStackTrace();
+//				System.exit(-1);
+//			}
+//			return null;
 		}
 	}
 
@@ -468,7 +469,7 @@ public class OWLReader implements Serializable {
 
 			Matcher m = IRI_PATTERN.matcher(ontologyClassName);
 			m.find();
-
+			
 			final String IRI;
 			final String name;
 			if (artificialClass) {
@@ -478,19 +479,19 @@ public class OWLReader implements Serializable {
 				IRI = m.group(1);
 				name = m.group(2);
 			}
-
 			OntologyClass dc;
-			try {
-				dc = new OntologyClass(URLDecoder.decode(IRI, "UTF-8"), URLDecoder.decode(name, "UTF-8"));
-				dc.isDataType = artificialClass;
+//			try {
+//				dc = new OntologyClass(URLDecoder.decode(IRI, "UTF-8"), URLDecoder.decode(name, "UTF-8"));
+			dc = new OntologyClass(IRI, name);
+			dc.isDataType = artificialClass;
 
-				classFactory.put(ontologyClassName, dc);
-				return dc;
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-				System.exit(-1);
-			}
-			return null;
+			classFactory.put(ontologyClassName, dc);
+			return dc;
+//			} catch (UnsupportedEncodingException e) {
+//				e.printStackTrace();
+//				System.exit(-1);
+//			}
+//			return null;
 		}
 
 	}
@@ -579,8 +580,8 @@ public class OWLReader implements Serializable {
 		log.debug("_________Extract additional info for properties__________");
 		return db.select(allPrefixes +
 //				
-				"select distinct ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " ?" + VARIABLE_NAME_DOMAIN + " (STR(?addInfo) as ?" + VARIABLE_NAME_ADDITIONAL_INFO
-				+ ") where { "
+				"select distinct ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " ?" + VARIABLE_NAME_DOMAIN
+				+ " (STR(?addInfo) as ?" + VARIABLE_NAME_ADDITIONAL_INFO + ") where { "
 //				
 				+ " ?" + VARIABLE_NAME_DOMAIN + " ?x ?y."
 //
@@ -668,8 +669,8 @@ public class OWLReader implements Serializable {
 		log.debug("_________Extract domain-unionOf datatypeProperties__________");
 		return db.select(allPrefixes
 //				
-				+ "select ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " ?" + VARIABLE_NAME_DOMAIN + " ?" + VARIABLE_NAME_PROPERTY + " ?" + VARIABLE_NAME_RANGE
-				+ " where {"
+				+ "select ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " ?" + VARIABLE_NAME_DOMAIN + " ?"
+				+ VARIABLE_NAME_PROPERTY + " ?" + VARIABLE_NAME_RANGE + " where {"
 //
 				+ "?" + VARIABLE_NAME_PROPERTY + " a owl:DatatypeProperty ."
 //
@@ -693,7 +694,8 @@ public class OWLReader implements Serializable {
 		log.debug("_________Extract domain-unionOf objectProperties__________");
 		return db.select(allPrefixes
 //				
-				+ "select ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " ?" + VARIABLE_NAME_PROPERTY + " ?" + VARIABLE_NAME_RANGE + " ?" + VARIABLE_NAME_DOMAIN
+				+ "select ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " ?" + VARIABLE_NAME_PROPERTY + " ?"
+				+ VARIABLE_NAME_RANGE + " ?" + VARIABLE_NAME_DOMAIN
 //
 				+ " where {"
 //
@@ -718,8 +720,8 @@ public class OWLReader implements Serializable {
 		log.debug("_________Extract DatatypeProperties__________");
 		return db.select(allPrefixes
 				//
-				+ " select ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " ?" + VARIABLE_NAME_DT_RESTRICTION + " ?" + VARIABLE_NAME_DOMAIN + " ?"
-				+ VARIABLE_NAME_PROPERTY + " ?" + VARIABLE_NAME_RANGE
+				+ " select ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " ?" + VARIABLE_NAME_DT_RESTRICTION + " ?"
+				+ VARIABLE_NAME_DOMAIN + " ?" + VARIABLE_NAME_PROPERTY + " ?" + VARIABLE_NAME_RANGE
 				//
 				+ " where {"
 				//
@@ -746,8 +748,8 @@ public class OWLReader implements Serializable {
 		log.debug("__________Extract ObjectType Properties_________");
 		return db.select(allPrefixes +
 //				
-				" select ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " ?" + VARIABLE_NAME_DOMAIN + " ?" + VARIABLE_NAME_PROPERTY + " ?" + VARIABLE_NAME_RANGE
-				+ " where {"
+				" select ?" + VARIABLE_NAME_PROPERTY_CONSTRAINT + " ?" + VARIABLE_NAME_DOMAIN + " ?"
+				+ VARIABLE_NAME_PROPERTY + " ?" + VARIABLE_NAME_RANGE + " where {"
 //
 				+ "?" + VARIABLE_NAME_PROPERTY + " a owl:ObjectProperty. "
 //			
