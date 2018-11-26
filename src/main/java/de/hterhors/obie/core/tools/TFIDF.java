@@ -1,17 +1,19 @@
 package de.hterhors.obie.core.tools;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TFIDF {
-	
+
 	public static final String[] DOC1 = { "a", "an", "and", "are", "as", "at", "be", "but", "by", "for", "if", "in",
 			"into", "a", "an", "and", "are", "as", "at", "be", "but", "by", "for", "if", "in", "into", "for", "if",
 			"in", "into", "their", "then", "there", "these", "baum", "they", "this", "to", "was", "is", "it", "no",
@@ -92,18 +94,16 @@ public class TFIDF {
 		return idf;
 	}
 
-	public static Map<String, Double> getIDFs(final Map<String, Set<String>> documents) {
+	public static <A extends Collection<String>> Map<String, Double> getIDFs(final Map<String, A> documents) {
 
 		final double N = documents.size();
 
-		Set<String> dict = Collections.synchronizedSet(new HashSet<String>());
-		Map<String, Double> termCounts = new ConcurrentHashMap<String, Double>(dict.size());
-		Map<String, Double> idfs = new ConcurrentHashMap<String, Double>(dict.size());
+		Set<String> dict = new HashSet<String>();
+		Map<String, Double> termCounts = new HashMap<String, Double>(dict.size());
+		Map<String, Double> idfs = new HashMap<String, Double>(dict.size());
 
-		documents.entrySet().parallelStream().forEach(e -> e.getValue().stream().forEach(w -> {
-			synchronized (dict) {
-				dict.add(w);
-			}
+		documents.entrySet().forEach(e -> e.getValue().stream().forEach(w -> {
+			dict.add(w);
 		}));
 
 //		System.out.println("Built dictionary: " + dict.size());
@@ -112,30 +112,26 @@ public class TFIDF {
 
 //		final AtomicInteger count = new AtomicInteger(0);
 
-		dict.stream().parallel().forEach(word -> {
+		dict.stream().forEach(word -> {
 //			if (count.incrementAndGet() % 1000 == 0) {
 //				System.out.println("count = " + count.get());
 //			}
 			documents.values().stream().forEach(document -> {
 
-				synchronized (termCounts) {
-					termCounts.put(word, termCounts.getOrDefault(word, 0d) + (document.contains(word) ? 1d : 0d));
-				}
+				termCounts.put(word, termCounts.getOrDefault(word, 0d) + (document.contains(word) ? 1d : 0d));
 			});
 		});
 
 //		count.set(0);
 
 //		System.out.println("Calculate inverse document frequency: ");
-		termCounts.entrySet().parallelStream().forEach(termCount -> {
+		termCounts.entrySet().forEach(termCount -> {
 
-			synchronized (idfs) {
 //				if (count.incrementAndGet() % 1000 == 0) {
 //					System.out.println("count = " + count.get());
 //				}
-				idfs.put(termCount.getKey(),
-						(termCount.getValue().intValue()) == 0 ? 0 : Math.log(N / termCount.getValue().doubleValue()));
-			}
+			idfs.put(termCount.getKey(),
+					(termCount.getValue().intValue()) == 0 ? 0 : Math.log(N / termCount.getValue().doubleValue()));
 		});
 		return idfs;
 	}
@@ -143,6 +139,27 @@ public class TFIDF {
 	public static final double getTFIDF(final Map<String, List<String>> documents, String documentName, String term) {
 		double tfidf = getTF(documents.get(documentName), term) * getIDF(documents, term);
 		return tfidf;
+	}
+
+	public static final Map<String, Map<String, Double>> getTFIDFs(final Map<String, List<String>> documents) {
+
+		Map<String, Map<String, Double>> output = new HashMap();
+		Map<String, Double> idfs = getIDFs(documents);
+
+		for (Entry<String, List<String>> e : documents.entrySet()) {
+			Map<String, Double> tfs = getTFs(e.getValue(), false);
+
+			Map<String, Double> v = new HashMap<>();
+			output.put(e.getKey(), v);
+
+			for (Entry<String, Double> string : tfs.entrySet()) {
+
+				v.put(string.getKey(), string.getValue() * idfs.getOrDefault(string.getKey(), 0D));
+			}
+
+		}
+
+		return output;
 	}
 
 }

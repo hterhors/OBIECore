@@ -78,11 +78,13 @@ public class OWLReader implements Serializable {
 
 	final private String allPrefixes;
 
+//	private static final String OWL_CLASS_NAME = "owl#Class";
+//	private static final String OWL_NAMED_INDIVIDUAL_NAME = "owl#NamedIndividual";
 	private static final String OWL_CLASS_NAME = "http://www.w3.org/2002/07/owl#Class";
-
 	private static final String OWL_NAMED_INDIVIDUAL_NAME = "http://www.w3.org/2002/07/owl#NamedIndividual";
 
-	private static final String VARIABLE_NAME_PROPERTY_CONSTRAINT = "propConstrainT";
+
+	private static final String VARIABLE_NAME_PROPERTY_CONSTRAINT = "propConstraint";
 
 	private static final String FUNCTIONAL_PROPERTY = "http://www.w3.org/2002/07/owl#FunctionalProperty";
 	private static final String OBJECT_PROPERTY = "http://www.w3.org/2002/07/owl#ObjectProperty";
@@ -469,15 +471,24 @@ public class OWLReader implements Serializable {
 
 			Matcher m = IRI_PATTERN.matcher(ontologyClassName);
 			m.find();
-			
-			final String IRI;
-			final String name;
+
+			String IRI;
+			String name;
 			if (artificialClass) {
 				IRI = defaultPrefix;
 				name = JavaClassNamingTools.normalizeClassName(JavaClassNamingTools.getVariableName(m.group(2)));
 			} else {
-				IRI = m.group(1);
-				name = m.group(2);
+				try {
+//					/*
+//					 * TODO: IRI requested?
+//					 */
+//
+					IRI = m.group(1);
+					name = m.group(2);
+				} catch (Exception e) {
+					IRI = "";
+					name = ontologyClassName;
+				}
 			}
 			OntologyClass dc;
 //			try {

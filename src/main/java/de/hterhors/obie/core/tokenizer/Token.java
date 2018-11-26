@@ -1,6 +1,8 @@
 package de.hterhors.obie.core.tokenizer;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Token implements Serializable {
 

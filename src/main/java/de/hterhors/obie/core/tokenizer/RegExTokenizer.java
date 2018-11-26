@@ -36,4 +36,21 @@ public class RegExTokenizer {
 		return tokenizations;
 	}
 
+	public static Tokenization tokenize(String sentence) {
+		int sentenceIndex = 0;
+		int index = 0;
+		Matcher matcher = pattern.matcher(sentence);
+		List<Token> tokens = new ArrayList<>();
+		while (matcher.find()) {
+			String text = matcher.group();
+			int from = matcher.start();
+			int to = matcher.end();
+			tokens.add(new Token(sentenceIndex, index, from, to, text));
+			index++;
+		}
+		sentenceIndex++;
+		Tokenization tokenization = new Tokenization(tokens, sentence, 0);
+		return tokenization;
+	}
+
 }

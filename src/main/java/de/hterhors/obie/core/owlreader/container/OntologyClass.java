@@ -105,7 +105,7 @@ public class OntologyClass implements Serializable {
 	public OntologyClass(String namespace, String ontologyName) {
 		this.namespace = namespace;
 		this.ontologyClassName = ontologyName;
-		this.fullyQualifiedOntolgyName = namespace + this.ontologyClassName;
+		this.fullyQualifiedOntolgyName = this.namespace + this.ontologyClassName;
 
 		this.javaClassName = JavaClassNamingTools.normalizeClassName(this.ontologyClassName);
 		this.javaInterfaceName = JavaClassNamingTools.toInterfaceName(this.javaClassName);
