@@ -73,8 +73,11 @@ public class IndividualFactory<I extends AbstractIndividual> {
 						Constructor<I> c = individualClassType.getDeclaredConstructor(String.class, String.class);
 						c.setAccessible(true);
 
-						possibleInstances.put(individual.fullyQualifiedOntolgyName,
-								c.newInstance(individual.namespace, individual.ontologyClassName));
+						final I indInstance = c.newInstance(individual.namespace, individual.ontologyClassName);
+						final String key = indInstance.nameSpace + indInstance.name;
+
+						possibleInstances.put(key, indInstance);
+
 					} catch (Exception e) {
 						e.printStackTrace();
 						System.exit(CAN_NOT_INSTANTIATE_INDIVIDUAL);
