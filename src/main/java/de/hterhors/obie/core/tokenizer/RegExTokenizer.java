@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 public class RegExTokenizer {
 
+//	private static Pattern pattern = Pattern.compile("[\\S]+");
 	private static Pattern pattern = Pattern.compile("[a-zA-Z]+|\\d+|[^\\w\\s]");
 
 	public static List<Tokenization> tokenize(List<String> sentences) {
