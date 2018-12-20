@@ -9,6 +9,7 @@ import org.apache.jena.rdf.model.Model;
 
 import de.hterhors.obie.core.ontology.AbstractIndividual;
 import de.hterhors.obie.core.ontology.IndividualFactory;
+import de.hterhors.obie.core.ontology.InvestigationRestriction;
 
 public interface IOBIEThing extends Serializable {
 
@@ -40,6 +41,7 @@ public interface IOBIEThing extends Serializable {
 		}
 
 	}
+
 	default public IndividualFactory<? extends AbstractIndividual> getIndividualFactory() {
 		return null;
 	}
@@ -48,8 +50,14 @@ public interface IOBIEThing extends Serializable {
 		return null;
 	}
 
-	// /***/
-//	public String getAnnotationID();
+	default public InvestigationRestriction getInvestigationRestriction() {
+		return InvestigationRestriction.noRestrictionInstance;
+	}
+
+	default public IOBIEThing setInvestigationRestriction(InvestigationRestriction investigationRestriction) {
+		throw new IllegalStateException(
+				"Can not set InvestigationRestriction. Either method is not implemented or class is of datatype.");
+	}
 
 	/***/
 	public Integer getCharacterOffset();

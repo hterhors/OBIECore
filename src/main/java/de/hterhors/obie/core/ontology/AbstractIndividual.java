@@ -13,7 +13,7 @@ public class AbstractIndividual implements Serializable {
 	final public String nameSpace;
 
 	public AbstractIndividual(final String nameSpace, final String name) {
-		this.nameSpace ="";// nameSpace;
+		this.nameSpace = nameSpace;
 		this.name = name;
 	}
 

@@ -17,6 +17,7 @@ public class OntologyInitializer {
 
 	public static final String INDIVIDUAL_FIELD_NAME = "individual";
 
+
 	public static void initializeOntology(AbstractOntologyEnvironment ontologyEnvironment) {
 
 		try {

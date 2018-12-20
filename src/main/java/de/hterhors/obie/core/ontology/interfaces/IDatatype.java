@@ -10,6 +10,6 @@ package de.hterhors.obie.core.ontology.interfaces;
 public interface IDatatype {
 
 	/***/
-	public String getSemanticValue();
+	public String getInterpretedValue();
 
 }

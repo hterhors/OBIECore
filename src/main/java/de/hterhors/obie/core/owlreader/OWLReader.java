@@ -6,6 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -17,6 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.jena.vocabulary.OWL;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -83,7 +85,6 @@ public class OWLReader implements Serializable {
 	private static final String OWL_CLASS_NAME = "http://www.w3.org/2002/07/owl#Class";
 	private static final String OWL_NAMED_INDIVIDUAL_NAME = "http://www.w3.org/2002/07/owl#NamedIndividual";
 
-
 	private static final String VARIABLE_NAME_PROPERTY_CONSTRAINT = "propConstraint";
 
 	private static final String FUNCTIONAL_PROPERTY = "http://www.w3.org/2002/07/owl#FunctionalProperty";
@@ -98,6 +99,12 @@ public class OWLReader implements Serializable {
 	public final IClassFilter classFilter;
 
 	private String defaultPrefix;
+
+	public static void main(String[] args) {
+
+		new OWLReader(x->true, Collections.emptyList(), "",
+				new File("/home/hterhors/Downloads/ClinTrialOntology/clinicalTrial.owl"), "");
+	}
 
 	/**
 	 * 
