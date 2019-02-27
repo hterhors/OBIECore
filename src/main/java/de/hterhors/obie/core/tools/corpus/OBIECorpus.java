@@ -42,10 +42,11 @@ public class OBIECorpus implements Serializable {
 		public final String content;
 		public final Map<Class<? extends IOBIEThing>, List<IOBIEThing>> annotations;
 
-		public Instance(String name, String content, Map<Class<? extends IOBIEThing>, List<IOBIEThing>> annotations) {
+		public Instance(String name, String content,
+				Map<Class<? extends IOBIEThing>, List<IOBIEThing>> templateAnnotations) {
 			this.name = name;
 			this.content = content;
-			this.annotations = Collections.unmodifiableMap(annotations);
+			this.annotations = Collections.unmodifiableMap(templateAnnotations);
 		}
 
 	}

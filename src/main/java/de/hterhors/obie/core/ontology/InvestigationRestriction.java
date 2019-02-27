@@ -97,14 +97,26 @@ public class InvestigationRestriction implements Serializable {
 	/**
 	 * An instance with no restrictions.
 	 */
-	public static final InvestigationRestriction noRestrictionInstance = new InvestigationRestriction(IOBIEThing.class);
+	public static final InvestigationRestriction noRestrictionInstance = new InvestigationRestriction(
+			IOBIEThing.class) {
+
+		/**
+				 * 
+				 */
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public String summarize() {
+			return "None";
+		}
+	};
 
 	/**
 	 * This is not the root class type but a specific sub class of the root class
 	 * type. This is important as subclasses of the root class type may have
 	 * different fields than the root class type itself.
 	 */
-	final public Class<? extends IOBIEThing> classType;
+//	final public Class<? extends IOBIEThing> classType;
 
 	/**
 	 * The restrictions for that specific class type. An empty set means no fields
@@ -132,14 +144,11 @@ public class InvestigationRestriction implements Serializable {
 	/**
 	 * Investigate field that are in {@link fieldNamesRestrictions} and class type
 	 * if {@link InvestigationRestriction}.
-	 * 
-	 * @param classType
 	 * @param fieldNamesRestrictions
 	 * @param investigateClassType
 	 */
-	public InvestigationRestriction(Class<? extends IOBIEThing> classType, Set<RestrictedField> fieldNamesRestrictions,
-			boolean investigateClassType) {
-		this.classType = classType;
+	public InvestigationRestriction(Set<RestrictedField> fieldNamesRestrictions, boolean investigateClassType) {
+//		this.classType = classType;
 		this.fieldNamesRestrictions = Collections.unmodifiableSet(fieldNamesRestrictions);
 		this.noRestrictionsOnFields = false;
 		this.investigateClassType = investigateClassType;
@@ -156,7 +165,7 @@ public class InvestigationRestriction implements Serializable {
 	 */
 	public InvestigationRestriction(Class<? extends IOBIEThing> classType,
 			Set<RestrictedField> fieldNamesRestrictions) {
-		this.classType = classType;
+//		this.classType = classType;
 		this.fieldNamesRestrictions = Collections.unmodifiableSet(fieldNamesRestrictions);
 		this.noRestrictionsOnFields = false;
 		this.investigateClassType = false;
@@ -171,7 +180,7 @@ public class InvestigationRestriction implements Serializable {
 	 * @param investigateClassType
 	 */
 	public InvestigationRestriction(Class<? extends IOBIEThing> classType, boolean investigateClassType) {
-		this.classType = classType;
+//		this.classType = classType;
 		this.fieldNamesRestrictions = null;
 		this.noRestrictionsOnFields = true;
 		this.investigateClassType = investigateClassType;
@@ -188,7 +197,7 @@ public class InvestigationRestriction implements Serializable {
 	 */
 	public InvestigationRestriction(Class<? extends IOBIEThing> classType, boolean noRestrictionsOnFields,
 			boolean investigateClassType) {
-		this.classType = classType;
+//		this.classType = classType;
 		this.fieldNamesRestrictions = new HashSet<>();
 		this.noRestrictionsOnFields = noRestrictionsOnFields;
 		this.investigateClassType = investigateClassType;
@@ -202,7 +211,7 @@ public class InvestigationRestriction implements Serializable {
 	 * @param classType
 	 */
 	public InvestigationRestriction(Class<? extends IOBIEThing> classType) {
-		this.classType = classType;
+//		this.classType = classType;
 		this.fieldNamesRestrictions = null;
 		this.noRestrictionsOnFields = true;
 		this.investigateClassType = true;
@@ -231,7 +240,6 @@ public class InvestigationRestriction implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((classType == null) ? 0 : classType.hashCode());
 		result = prime * result + ((fieldNamesRestrictions == null) ? 0 : fieldNamesRestrictions.hashCode());
 		result = prime * result + (investigateClassType ? 1231 : 1237);
 		result = prime * result + (noRestrictionsOnFields ? 1231 : 1237);
@@ -248,11 +256,6 @@ public class InvestigationRestriction implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		InvestigationRestriction other = (InvestigationRestriction) obj;
-		if (classType == null) {
-			if (other.classType != null)
-				return false;
-		} else if (!classType.equals(other.classType))
-			return false;
 		if (fieldNamesRestrictions == null) {
 			if (other.fieldNamesRestrictions != null)
 				return false;
@@ -272,9 +275,11 @@ public class InvestigationRestriction implements Serializable {
 
 	@Override
 	public String toString() {
-		return "InvestigationRestriction [classType=" + classType.getSimpleName() + ", fieldNamesRestrictions="
-				+ fieldNamesRestrictions + ", restrictedFieldNames=" + restrictedFieldNames + ", investigateClassType="
-				+ investigateClassType + ", noRestrictionsOnFields=" + noRestrictionsOnFields + "]";
+		return "InvestigationRestriction ["
+//				+ "classType=" + classType.getSimpleName() + ","
+				+ " fieldNamesRestrictions=" + fieldNamesRestrictions + ", restrictedFieldNames=" + restrictedFieldNames
+				+ ", investigateClassType=" + investigateClassType + ", noRestrictionsOnFields="
+				+ noRestrictionsOnFields + "]";
 	}
 
 	public static List<Set<RestrictedField>> getFieldRestrictionCombinations(Class<? extends IOBIEThing> m,
@@ -336,7 +341,7 @@ public class InvestigationRestriction implements Serializable {
 	private static Set<RestrictedField> getAllSingleFieldsRec(Set<RestrictedField> fieldNames,
 			Class<? extends IOBIEThing> m) {
 
-		ReflectionUtils.getSlots(m).forEach(field -> {
+		ReflectionUtils.getNonDatatypeSlots(m).forEach(field -> {
 			field.setAccessible(true);
 			fieldNames.add(new RestrictedField(field.getName(), false));
 

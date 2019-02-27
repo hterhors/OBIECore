@@ -29,8 +29,11 @@ public class ReflectionUtils {
 	private static final Map<Class<?>, String> simpleNameChaching = new HashMap<>();
 
 	private static final Map<Class<? extends IOBIEThing>, List<Field>> chachedFields = new HashMap<>();
+	private static final Map<Class<? extends IOBIEThing>, List<Field>> chachedFields_no_DT = new HashMap<>();
 	private static final Map<Class<? extends IOBIEThing>, Map<InvestigationRestriction, Set<String>>> chachedFieldNames = new HashMap<>();
+	private static final Map<Class<? extends IOBIEThing>, Map<InvestigationRestriction, Set<String>>> chachedFieldNames_no_DT = new HashMap<>();
 	private static final Map<Class<? extends IOBIEThing>, Map<InvestigationRestriction, List<Field>>> chachedFields_invest = new HashMap<>();
+	private static final Map<Class<? extends IOBIEThing>, Map<InvestigationRestriction, List<Field>>> chachedFields_invest_no_DT = new HashMap<>();
 	private static final Map<Class<? extends IOBIEThing>, Map<String, Field>> chachedSingleFieldNames = new HashMap<>();
 
 	private static final Map<Class<? extends IOBIEThing>, Set<Class<? extends IOBIEThing>>> assignableSubClassAnnotationCache = new HashMap<>();
@@ -188,6 +191,33 @@ public class ReflectionUtils {
 
 	}
 
+	public static List<Field> getNonDatatypeSlots(Class<? extends IOBIEThing> clazz) {
+
+		Objects.requireNonNull(clazz);
+
+		if (isAnnotationPresent(clazz, DatatypeProperty.class))
+			return Collections.emptyList();
+
+		List<Field> declaredFields;
+
+		if ((declaredFields = chachedFields_no_DT.get(clazz)) == null) {
+			declaredFields = new ArrayList<>();
+			for (Field f : clazz.getDeclaredFields()) {
+				if (!isAnnotationPresent(f, OntologyModelContent.class))
+					continue;
+
+				f.setAccessible(true);
+
+				if (isAnnotationPresent(f, DatatypeProperty.class))
+					continue;
+
+				declaredFields.add(f);
+			}
+			chachedFields_no_DT.put(clazz, declaredFields);
+		}
+		return declaredFields;
+	}
+
 	public static List<Field> getSlots(Class<? extends IOBIEThing> clazz) {
 
 		Objects.requireNonNull(clazz);
@@ -211,8 +241,49 @@ public class ReflectionUtils {
 		return declaredFields;
 	}
 
-	public static List<Field> getSlots(Class<? extends IOBIEThing> clazz,
+	public static List<Field> getNonDatatypeSlots(Class<? extends IOBIEThing> clazz,
 			InvestigationRestriction investigationRestrictionRestrictions) {
+
+		Objects.requireNonNull(clazz);
+
+		if (isAnnotationPresent(clazz, DatatypeProperty.class))
+			return Collections.emptyList();
+
+		List<Field> declaredFields;
+
+		Map<InvestigationRestriction, List<Field>> pntr;
+
+		if ((pntr = chachedFields_invest_no_DT.get(clazz)) == null) {
+			pntr = new HashMap<>();
+			chachedFields_invest_no_DT.put(clazz, pntr);
+		}
+
+		if ((declaredFields = pntr.get(investigationRestrictionRestrictions)) == null) {
+			declaredFields = new ArrayList<>();
+
+			for (Field f : clazz.getDeclaredFields()) {
+
+				if (!isAnnotationPresent(f, OntologyModelContent.class))
+					continue;
+
+				if (!investigationRestrictionRestrictions.investigateField(f.getName()))
+					continue;
+
+				if (isAnnotationPresent(f, DatatypeProperty.class))
+					continue;
+
+				f.setAccessible(true);
+
+				declaredFields.add(f);
+			}
+			pntr.put(investigationRestrictionRestrictions, declaredFields);
+		}
+
+		return declaredFields;
+	}
+
+	public synchronized static List<Field> getSlots(Class<? extends IOBIEThing> clazz,
+			InvestigationRestriction investigationRestriction) {
 
 		Objects.requireNonNull(clazz);
 
@@ -228,7 +299,8 @@ public class ReflectionUtils {
 			chachedFields_invest.put(clazz, pntr);
 		}
 
-		if ((declaredFields = pntr.get(investigationRestrictionRestrictions)) == null) {
+		if ((declaredFields = pntr.get(investigationRestriction)) == null) {
+
 			declaredFields = new ArrayList<>();
 
 			for (Field f : clazz.getDeclaredFields()) {
@@ -236,19 +308,19 @@ public class ReflectionUtils {
 				if (!isAnnotationPresent(f, OntologyModelContent.class))
 					continue;
 
-				if (!investigationRestrictionRestrictions.investigateField(f.getName()))
+				if (!investigationRestriction.investigateField(f.getName()))
 					continue;
-				
+
 				f.setAccessible(true);
 				declaredFields.add(f);
 			}
-			pntr.put(investigationRestrictionRestrictions, declaredFields);
+			pntr.put(investigationRestriction, declaredFields);
 		}
 
 		return declaredFields;
 	}
 
-	public static Set<String> getSlotNames(Class<? extends IOBIEThing> clazz,
+	public static Set<String> getNonDatatypeSlotNames(Class<? extends IOBIEThing> clazz,
 			InvestigationRestriction investigationRestrictionRestrictions) {
 
 		Objects.requireNonNull(clazz);
@@ -256,6 +328,41 @@ public class ReflectionUtils {
 		if (isAnnotationPresent(clazz, DatatypeProperty.class))
 			return Collections.emptySet();
 
+		Set<String> declaredFieldNames;
+
+		Map<InvestigationRestriction, Set<String>> pntr;
+
+		if ((pntr = chachedFieldNames_no_DT.get(clazz)) == null) {
+			pntr = new HashMap<>();
+			chachedFieldNames_no_DT.put(clazz, pntr);
+		}
+
+		if ((declaredFieldNames = pntr.get(investigationRestrictionRestrictions)) == null) {
+			declaredFieldNames = new HashSet<>();
+			for (Field f : clazz.getDeclaredFields()) {
+
+				if (!isAnnotationPresent(f, OntologyModelContent.class))
+					continue;
+
+				if (!investigationRestrictionRestrictions.investigateField(f.getName()))
+					continue;
+
+				declaredFieldNames.add(f.getName());
+			}
+			pntr.put(investigationRestrictionRestrictions, declaredFieldNames);
+		}
+
+		return declaredFieldNames;
+	}
+
+	public static Set<String> getSlotNames(Class<? extends IOBIEThing> clazz,
+			InvestigationRestriction investigationRestrictionRestrictions) {
+
+		Objects.requireNonNull(clazz);
+
+//		if (isAnnotationPresent(clazz, DatatypeProperty.class))
+//			return Collections.emptySet();
+//		
 		Set<String> declaredFieldNames;
 
 		Map<InvestigationRestriction, Set<String>> pntr;

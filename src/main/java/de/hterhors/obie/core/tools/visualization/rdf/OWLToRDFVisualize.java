@@ -48,7 +48,7 @@ public class OWLToRDFVisualize {
 				final String property = "http://cit-ec.de/scio/" + relationType.simpleName + " " + relationName;
 
 				for (OntologyClass range : relations.getValue()) {
-					final boolean rangeIsDataTypeProperty = range.isDataType;
+					final boolean rangeIsDataTypeProperty = range.isDataType ;
 
 					final String rangeClassName = range.javaClassName;
 

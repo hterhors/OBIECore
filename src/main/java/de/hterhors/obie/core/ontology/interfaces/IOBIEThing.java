@@ -55,8 +55,10 @@ public interface IOBIEThing extends Serializable {
 	}
 
 	default public IOBIEThing setInvestigationRestriction(InvestigationRestriction investigationRestriction) {
-		throw new IllegalStateException(
-				"Can not set InvestigationRestriction. Either method is not implemented or class is of datatype.");
+		if (investigationRestriction != null)
+			throw new IllegalStateException(
+					"Can not set InvestigationRestriction. Either method is not implemented or class is of datatype.");
+		return this;
 	}
 
 	/***/

@@ -53,7 +53,8 @@ public class TrippleStore implements Serializable {
 	 * @param ontologyFile
 	 */
 	public TrippleStore() {
-		TripleStoreDatabase db = new TripleStoreDatabase();
+		TripleStoreDatabase db = new TripleStoreDatabase(
+				new File("/home/hterhors/git/OBIECore/mappingbased_objects_en.ttl"));
 		QueryResult r = db.select(
 				"select distinct * where {<http://dbpedia.org/resource/Gowa_Regency> ?p <http://dbpedia.org/resource/Indonesia>} LIMIT 100");
 		r.queryData.forEach(System.out::println);

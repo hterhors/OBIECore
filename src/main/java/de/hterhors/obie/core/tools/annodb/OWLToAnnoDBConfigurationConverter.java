@@ -130,6 +130,11 @@ public class OWLToAnnoDBConfigurationConverter {
 							+ rangeRelations.getKey().ontologyPropertyName + "" + SPLITTER + ""
 							+ range.ontologyClassName + "" + SPLITTER + "" + cardinality.simpleName.split(":")[0] + ""
 							+ SPLITTER + "" + cardinality.simpleName.split(":")[1] + "" + SPLITTER + ""
+/**
+ * TODO: data type is buggy for SCIo because weight etc extends QUDT quantity but should be datatype classes.
+ */
+							
+							
 							+ (range.isDataType ? "true" : "false") + "" + SPLITTER + ""
 							+ (cardinality == ECardinalityType.SINGLE || cardinality == ECardinalityType.UNDEFINED
 									? JavaClassNamingTools.combineRelationWithClassNameAsClassName(

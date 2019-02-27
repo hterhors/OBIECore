@@ -10,18 +10,27 @@ package de.hterhors.obie.core.evaluation;
 
 public class PRF1 {
 
-	public double tp, fp, fn;
+	public double tp, fp, fn, tn;
 
 	public PRF1() {
 		tp = 0;
 		fp = 0;
 		fn = 0;
+		tn = 0;
 	}
 
 	public PRF1(int tp, int fp, int fn) {
 		this.tp = tp;
 		this.fp = fp;
 		this.fn = fn;
+		this.tn = 0;
+	}
+
+	public PRF1(int tp, int fp, int fn, int tn) {
+		this.tp = tp;
+		this.fp = fp;
+		this.fn = fn;
+		this.tn = tn;
 	}
 
 	/**
@@ -33,12 +42,14 @@ public class PRF1 {
 		this.tp = c.tp;
 		this.fp = c.fp;
 		this.fn = c.fn;
+		this.tn = c.tn;
 	}
 
 	public PRF1 add(PRF1 adder) {
 		this.tp += adder.tp;
 		this.fp += adder.fp;
 		this.fn += adder.fn;
+		this.tn += adder.tn;
 		return this;
 	}
 
@@ -46,6 +57,7 @@ public class PRF1 {
 		this.tp = setter.tp;
 		this.fp = setter.fp;
 		this.fn = setter.fn;
+		this.tn = setter.tn;
 		return this;
 	}
 
@@ -54,6 +66,15 @@ public class PRF1 {
 		final double r = getRecall();
 		final double d = (p + r);
 		return d == 0 ? 0 : (2 * p * r) / d;
+	}
+
+	public double getAccuracy() {
+		double d = (tp + tn + fp + fn);
+		
+		if (d == 0)
+			return 0;
+	
+		return (tp + tn) / (tp + tn + fp + fn);
 	}
 
 	public double getRecall() {
@@ -76,8 +97,9 @@ public class PRF1 {
 
 	@Override
 	public String toString() {
-		return "PRF1 [tp=" + tp + ", fp=" + fp + ", fn=" + fn + ", getF1()=" + getF1() + ", getRecall()=" + getRecall()
-				+ ", getPrecision()=" + getPrecision() + ", getJaccard()=" + getJaccard() + "]";
+		return "PRF1 [tp=" + tp + ", fp=" + fp + ", fn=" + fn + ", tn=" + tn + ", getF1()=" + getF1()
+				+ ", getAccuracy()=" + getAccuracy() + ", getRecall()=" + getRecall() + ", getPrecision()="
+				+ getPrecision() + ", getJaccard()=" + getJaccard() + "]";
 	}
 
 }

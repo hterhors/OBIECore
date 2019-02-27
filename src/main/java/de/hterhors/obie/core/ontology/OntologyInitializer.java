@@ -21,6 +21,7 @@ public class OntologyInitializer {
 	public static void initializeOntology(AbstractOntologyEnvironment ontologyEnvironment) {
 
 		try {
+			
 			final OWLReader owlReader = new OWLReader(ontologyEnvironment);
 
 			Method systemInitMethod = IndividualFactory.class.getDeclaredMethod(INDIVIDUAL_FACTORY_INIT_METHOD_NAME,
