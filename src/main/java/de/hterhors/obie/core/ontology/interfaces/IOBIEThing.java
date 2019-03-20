@@ -3,13 +3,17 @@ package de.hterhors.obie.core.ontology.interfaces;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.jena.rdf.model.Model;
 
 import de.hterhors.obie.core.ontology.AbstractIndividual;
 import de.hterhors.obie.core.ontology.IndividualFactory;
 import de.hterhors.obie.core.ontology.InvestigationRestriction;
+import de.hterhors.obie.core.ontology.ReflectionUtils;
+import de.hterhors.obie.core.ontology.container.Slot;
 
 public interface IOBIEThing extends Serializable {
 
@@ -102,6 +106,20 @@ public interface IOBIEThing extends Serializable {
 			System.exit(1);
 			throw new IllegalArgumentException(e.getMessage());
 		}
+	}
+
+	IOBIEThing getThis();
+
+	public default List<Slot> getInvestigatedSlots() {
+		return ReflectionUtils.getFields(getThis().getClass(), getThis().getInvestigationRestriction()).stream()
+				.map(f -> new Slot(getThis(), f)).collect(Collectors.toList());
+	}
+
+	public default String getLabel() {
+		if (getIndividual() == null)
+			return getThis().getClass().getSimpleName();//getONTOLOGY_NAME();
+		else
+			return getIndividual().getURI();
 	}
 
 }

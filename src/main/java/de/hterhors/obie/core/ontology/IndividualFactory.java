@@ -29,6 +29,18 @@ public class IndividualFactory<I extends AbstractIndividual> {
 		return Collections.unmodifiableCollection(possibleInstances.values());
 	}
 
+	public boolean containsIndividualByURI(String URI) {
+		if (!initialized) {
+			throw new IllegalStateException(
+					"IndividualFactory not initialized. Call OntologyInitializer.initializeOntology(ontologyEnvironment);");
+		}
+
+		if (URI == null)
+			return false;
+
+		return possibleInstances.containsKey(URI);
+	}
+
 	public I getIndividualByURI(String URI) {
 		if (!initialized) {
 			throw new IllegalStateException(

@@ -20,11 +20,6 @@ public class EmptyOBIEInstance implements IOBIEThing {
 	private EmptyOBIEInstance() {
 	}
 
-//	@Override
-//	public String getAnnotationID() {
-//		return null;
-//	}
-
 	@Override
 	public Integer getCharacterOffset() {
 		return null;
@@ -82,6 +77,11 @@ public class EmptyOBIEInstance implements IOBIEThing {
 	@Override
 	public AbstractIndividual getIndividual() {
 		return null;
+	}
+
+	@Override
+	public IOBIEThing getThis() {
+		return this;
 	}
 
 }

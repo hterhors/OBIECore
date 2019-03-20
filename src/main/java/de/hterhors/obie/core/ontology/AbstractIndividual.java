@@ -18,9 +18,9 @@ public class AbstractIndividual implements Serializable {
 	}
 
 	public String getURI() {
-		return nameSpace+name;
+		return nameSpace + name;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

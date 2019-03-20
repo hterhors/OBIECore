@@ -22,6 +22,7 @@ import de.hterhors.obie.core.ontology.annotations.ImplementationClass;
 import de.hterhors.obie.core.ontology.annotations.OntologyModelContent;
 import de.hterhors.obie.core.ontology.annotations.RelationTypeCollection;
 import de.hterhors.obie.core.ontology.annotations.SuperRootClasses;
+import de.hterhors.obie.core.ontology.container.Slot;
 import de.hterhors.obie.core.ontology.interfaces.IOBIEThing;
 
 public class ReflectionUtils {
@@ -33,6 +34,7 @@ public class ReflectionUtils {
 	private static final Map<Class<? extends IOBIEThing>, Map<InvestigationRestriction, Set<String>>> chachedFieldNames = new HashMap<>();
 	private static final Map<Class<? extends IOBIEThing>, Map<InvestigationRestriction, Set<String>>> chachedFieldNames_no_DT = new HashMap<>();
 	private static final Map<Class<? extends IOBIEThing>, Map<InvestigationRestriction, List<Field>>> chachedFields_invest = new HashMap<>();
+	private static final Map<Class<? extends IOBIEThing>, Map<InvestigationRestriction, List<Slot>>> chachedSlots_invest = new HashMap<>();
 	private static final Map<Class<? extends IOBIEThing>, Map<InvestigationRestriction, List<Field>>> chachedFields_invest_no_DT = new HashMap<>();
 	private static final Map<Class<? extends IOBIEThing>, Map<String, Field>> chachedSingleFieldNames = new HashMap<>();
 
@@ -282,7 +284,7 @@ public class ReflectionUtils {
 		return declaredFields;
 	}
 
-	public synchronized static List<Field> getSlots(Class<? extends IOBIEThing> clazz,
+	public synchronized static List<Field> getFields(Class<? extends IOBIEThing> clazz,
 			InvestigationRestriction investigationRestriction) {
 
 		Objects.requireNonNull(clazz);
@@ -319,6 +321,43 @@ public class ReflectionUtils {
 
 		return declaredFields;
 	}
+
+//	public synchronized static List<Slot> getInvestigatedSlots(IOBIEThing entity) {
+//
+//		Objects.requireNonNull(entity.getClass());
+//
+//		if (isAnnotationPresent(entity.getClass(), DatatypeProperty.class))
+//			return Collections.emptyList();
+//
+//		List<Slot> slots;
+//
+//		Map<InvestigationRestriction, List<Slot>> pntr;
+//
+//		if ((pntr = chachedSlots_invest.get(entity.getClass())) == null) {
+//			pntr = new HashMap<>();
+//			chachedSlots_invest.put(entity.getClass(), pntr);
+//		}
+//
+//		if ((slots = pntr.get(entity.getInvestigationRestriction())) == null) {
+//
+//			slots = new ArrayList<>();
+//
+//			for (Field f : entity.getClass().getDeclaredFields()) {
+//
+//				if (!isAnnotationPresent(f, OntologyModelContent.class))
+//					continue;
+//
+//				if (!entity.getInvestigationRestriction().investigateField(f.getName()))
+//					continue;
+//
+//				f.setAccessible(true);
+//				slots.add(new Slot(entity, f));
+//			}
+//			pntr.put(entity.getInvestigationRestriction(), slots);
+//		}
+//
+//		return slots;
+//	}
 
 	public static Set<String> getNonDatatypeSlotNames(Class<? extends IOBIEThing> clazz,
 			InvestigationRestriction investigationRestrictionRestrictions) {
