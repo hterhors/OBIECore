@@ -25,6 +25,6 @@ public abstract class AbstractProjectEnvironment<T extends IOBIEThing> implement
 
 	public abstract File getBigramCorpusFileDirectory();
 
-	public abstract String getCorpusPrefix();
+	public abstract String getCorpusName();
 
 }

@@ -52,8 +52,8 @@ public class TextToAnnoDBFormat {
 				int tokenIndex = 1;
 				ps.println("#" + tokenization.originalSentence);
 				for (Token token : tokenization.tokens) {
-					ps.println(token.getSentenceIndex() + 1 + "\t" + tokenIndex + "\t" + token.getFromCharPosition()
-							+ "\t" + token.getToCharPosition() + "\t" + token.getText());
+					ps.println(token.getSentenceIndex() + 1 + "\t" + tokenIndex + "\t" + token.getOnsetCharPosition()
+							+ "\t" + token.getOffsetCharPosition() + "\t" + token.getText());
 					tokenIndex++;
 				}
 

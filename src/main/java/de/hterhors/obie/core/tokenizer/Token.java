@@ -1,8 +1,6 @@
 package de.hterhors.obie.core.tokenizer;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Token implements Serializable {
 
@@ -42,11 +40,11 @@ public class Token implements Serializable {
 		return sentenceIndex;
 	}
 
-	public int getFromCharPosition() {
+	public int getOnsetCharPosition() {
 		return from;
 	}
 
-	public int getToCharPosition() {
+	public int getOffsetCharPosition() {
 		return to;
 	}
 

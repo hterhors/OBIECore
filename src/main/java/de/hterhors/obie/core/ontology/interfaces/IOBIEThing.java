@@ -117,9 +117,9 @@ public interface IOBIEThing extends Serializable {
 
 	public default String getLabel() {
 		if (getIndividual() == null)
-			return getThis().getClass().getSimpleName();//getONTOLOGY_NAME();
+			return getThis().getClass().getSimpleName();// getONTOLOGY_NAME();
 		else
-			return getIndividual().getURI();
+			return getIndividual().name;
 	}
 
 }
